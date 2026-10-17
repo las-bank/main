@@ -18,7 +18,23 @@
     --success: #4ade80;
     --danger: #f87171;
     --warning: #facc15;
+    --accent: #ffffff;
     --shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    --radius: 16px;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="light"] {
+    --bg: #f5f5f7;
+    --bg-2: #ffffff;
+    --card: #ffffff;
+    --card-hover: #f0f0f2;
+    --border: #e0e0e4;
+    --text: #1a1a1a;
+    --text-dim: #6b6b70;
+    --invert: #ffffff;
+    --accent: #000000;
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,10 +42,15 @@
   html, body {
     height: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-    background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,0.05), transparent), #000;
+    background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  [data-theme="dark"] body {
+    background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,0.05), transparent), #000;
   }
 
   #app { position: relative; z-index: 1; min-height: 100vh; }
@@ -45,7 +66,6 @@
     color: var(--text);
   }
 
-  /* SVG icons */
   .ic {
     width: 18px; height: 18px;
     flex-shrink: 0;
@@ -56,6 +76,35 @@
   .ic-md { width: 22px; height: 22px; }
   .ic-lg { width: 26px; height: 26px; }
   .ic-xl { width: 72px; height: 72px; stroke-width: 1.4; }
+
+  /* ─── Анимации ─── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .anim-up { animation: fadeInUp 0.35s var(--transition) both; }
+  .anim-in { animation: fadeIn 0.3s ease both; }
+  .anim-scale { animation: scaleIn 0.25s var(--transition) both; }
+  .anim-shake { animation: shake 0.35s ease; }
 
   /* Offline overlay */
   #offline {
@@ -68,7 +117,7 @@
     flex-direction: column; gap: 18px;
     text-align: center; padding: 20px;
   }
-  #offline.show { display: flex; }
+  #offline.show { display: flex; animation: fadeIn 0.3s ease; }
   #offline .off-icon { color: var(--danger); }
   #offline h2 { font-size: 26px; }
   #offline p { color: var(--text-dim); font-size: 15px; }
@@ -76,8 +125,9 @@
     padding: 12px 28px;
     background: #fff; border: none; border-radius: 12px;
     color: #000; font-weight: 600; cursor: pointer; font-size: 15px;
+    transition: transform 0.2s;
   }
-  #offline button:hover { background: #ddd; }
+  #offline button:hover { background: #ddd; transform: scale(1.03); }
 
   /* Header */
   .header {
@@ -88,10 +138,11 @@
   .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; }
   .logo-mark {
     width: 40px; height: 40px; border-radius: 10px;
-    background: #fff; color: #000;
+    background: var(--accent); color: var(--invert);
     display: flex; align-items: center; justify-content: center;
+    transition: background var(--transition), color var(--transition);
   }
-  .user-info { display: flex; align-items: center; gap: 12px; }
+  .user-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .user-info .name { font-weight: 500; }
   .logout-btn {
     padding: 8px 14px; background: transparent;
@@ -101,12 +152,25 @@
   }
   .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
 
+  /* Theme toggle */
+  .theme-toggle {
+    width: 40px; height: 40px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text-dim);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover { color: var(--text); border-color: var(--accent); transform: rotate(15deg); }
+
   /* Auth */
   .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .auth-card {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 20px; padding: 38px; width: 100%; max-width: 440px;
     box-shadow: var(--shadow);
+    animation: scaleIn 0.35s var(--transition) both;
+    transition: background var(--transition), border var(--transition);
   }
   .auth-card h1 { font-size: 26px; margin-bottom: 6px; }
   .auth-card .subtitle { color: var(--text-dim); margin-bottom: 26px; font-size: 14px; }
@@ -115,7 +179,7 @@
     flex: 1; padding: 10px; background: transparent; border: none; border-radius: 9px;
     color: var(--text-dim); cursor: pointer; font-weight: 500; transition: all .2s; font-size: 14px;
   }
-  .auth-tab.active { background: #fff; color: #000; font-weight: 600; }
+  .auth-tab.active { background: var(--accent); color: var(--invert); font-weight: 600; }
 
   /* Forms */
   .form-group { margin-bottom: 16px; }
@@ -123,29 +187,33 @@
   input, select, textarea {
     width: 100%; padding: 12px 14px;
     background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px;
-    color: var(--text); font-size: 15px; font-family: inherit; transition: border-color .2s;
+    color: var(--text); font-size: 15px; font-family: inherit; transition: border-color .2s, background var(--transition);
   }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: #fff; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
   textarea { resize: vertical; min-height: 76px; }
 
   .checkbox-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-dim); margin-bottom: 18px; }
-  .checkbox-row input[type="checkbox"] { width: 17px; height: 17px; margin-top: 1px; accent-color: #fff; flex-shrink: 0; }
-  .checkbox-row a { color: #fff; }
+  .checkbox-row input[type="checkbox"] { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--accent); flex-shrink: 0; }
+  .checkbox-row a { color: var(--text); }
 
   .btn {
     padding: 12px 22px; border: none; border-radius: 10px;
     font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s;
     font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    position: relative; overflow: hidden;
   }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
-  .btn-primary { background: #fff; color: #000; width: 100%; }
-  .btn-primary:hover:not(:disabled) { background: #d9d9d9; }
+  .btn:not(:disabled):active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: var(--invert); width: 100%; }
+  .btn-primary:hover:not(:disabled) { filter: brightness(0.85); }
   .btn-secondary { background: var(--bg-2); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover:not(:disabled) { border-color: #fff; }
+  .btn-secondary:hover:not(:disabled) { border-color: var(--accent); }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
-  .btn-ghost:hover:not(:disabled) { color: var(--text); border-color: #fff; }
+  .btn-ghost:hover:not(:disabled) { color: var(--text); border-color: var(--accent); }
   .btn-danger { background: rgba(248, 113, 113, 0.12); color: var(--danger); border: 1px solid rgba(248,113,113,.25); }
   .btn-danger:hover:not(:disabled) { background: rgba(248, 113, 113, 0.22); }
+  .btn-success { background: rgba(74, 222, 128, 0.12); color: var(--success); border: 1px solid rgba(74,222,128,.25); }
+  .btn-success:hover:not(:disabled) { background: rgba(74, 222, 128, 0.22); }
   .btn-sm { padding: 8px 13px; font-size: 13px; }
   .btn-icon { padding: 8px; }
 
@@ -154,18 +222,28 @@
   .grid-cards { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
   .card {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 22px; box-shadow: var(--shadow);
+    border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow);
+    transition: background var(--transition), border var(--transition);
+    animation: fadeInUp 0.35s var(--transition) both;
   }
 
   .balance-card {
+    background: linear-gradient(160deg, var(--card-hover) 0%, var(--card) 70%);
+    border: 1px solid var(--border); color: var(--text); position: relative; overflow: hidden;
+  }
+  [data-theme="dark"] .balance-card {
     background: linear-gradient(160deg, #202020 0%, #0a0a0a 70%);
-    border: 1px solid #333; color: #fff; position: relative; overflow: hidden;
+    border-color: #333; color: #fff;
   }
   .balance-card::after {
     content: ''; position: absolute; top: -60%; right: -20%;
     width: 280px; height: 280px;
     background: radial-gradient(circle, rgba(255,255,255,0.09) 0%, transparent 70%);
     border-radius: 50%;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  [data-theme="light"] .balance-card::after {
+    background: radial-gradient(circle, rgba(0,0,0,0.04) 0%, transparent 70%);
   }
   .balance-card .label {
     opacity: .75; font-size: 12px; margin-bottom: 10px;
@@ -183,8 +261,8 @@
     text-align: center; color: var(--text); font-family: inherit;
     display: flex; flex-direction: column; align-items: center; gap: 8px;
   }
-  .quick-action:hover { border-color: #fff; transform: translateY(-2px); }
-  .quick-action .qa-icon { color: #fff; }
+  .quick-action:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
+  .quick-action .qa-icon { color: var(--accent); }
   .quick-action .label { font-size: 13px; color: var(--text-dim); }
 
   .section-title { font-size: 17px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
@@ -195,6 +273,7 @@
     display: flex; gap: 4px; background: var(--card); padding: 4px;
     border-radius: 12px; border: 1px solid var(--border);
     margin-bottom: 20px; overflow-x: auto; flex-wrap: wrap;
+    transition: background var(--transition), border var(--transition);
   }
   .tab {
     padding: 9px 15px; background: transparent; border: none; border-radius: 9px;
@@ -202,7 +281,7 @@
     transition: all .2s; white-space: nowrap; font-family: inherit;
     display: inline-flex; align-items: center; gap: 8px;
   }
-  .tab.active { background: #fff; color: #000; font-weight: 600; }
+  .tab.active { background: var(--accent); color: var(--invert); font-weight: 600; }
   .tab:hover:not(.active) { color: var(--text); }
 
   /* Lists */
@@ -210,17 +289,20 @@
     background: var(--card); border: 1px solid var(--border); border-radius: 12px;
     padding: 14px 16px; margin-bottom: 10px;
     display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+    transition: all .2s;
+    animation: fadeInUp 0.3s var(--transition) both;
   }
+  .list-item:hover { border-color: var(--accent); }
   .list-item .left { flex: 1; min-width: 180px; }
   .list-item .title { font-weight: 600; margin-bottom: 3px; }
   .list-item .meta { font-size: 13px; color: var(--text-dim); }
   .list-item .amount { font-size: 15px; font-weight: 600; white-space: nowrap; }
   .amount.in { color: var(--success); }
   .amount.out { color: var(--danger); }
-  .row-actions { display: flex; align-items: center; gap: 10px; }
+  .row-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
   .check { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: var(--text-dim); }
-  .check input { width: 17px; height: 17px; accent-color: #fff; cursor: pointer; }
+  .check input { width: 17px; height: 17px; accent-color: var(--accent); cursor: pointer; }
 
   .bulk-bar {
     display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
@@ -240,16 +322,18 @@
     backdrop-filter: blur(8px); display: none;
     align-items: center; justify-content: center; z-index: 100; padding: 20px;
   }
-  .modal.show { display: flex; }
+  .modal.show { display: flex; animation: fadeIn 0.2s ease; }
   .modal-content {
     background: var(--card); border: 1px solid var(--border); border-radius: 18px;
     padding: 26px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
     box-shadow: var(--shadow);
+    animation: scaleIn 0.25s var(--transition) both;
+    transition: background var(--transition), border var(--transition);
   }
   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
   .modal-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-  .modal-close { background: transparent; border: none; color: var(--text-dim); cursor: pointer; padding: 6px; border-radius: 8px; display: flex; }
-  .modal-close:hover { color: var(--text); background: var(--bg-2); }
+  .modal-close { background: transparent; border: none; color: var(--text-dim); cursor: pointer; padding: 6px; border-radius: 8px; display: flex; transition: all .2s; }
+  .modal-close:hover { color: var(--text); background: var(--bg-2); transform: rotate(90deg); }
 
   /* QR */
   .qr-container {
@@ -268,6 +352,7 @@
   .alert {
     padding: 12px 14px; border-radius: 10px; margin-bottom: 14px;
     font-size: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    animation: fadeInUp 0.25s var(--transition) both;
   }
   .alert.error { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid rgba(248,113,113,.3); }
   .alert.success { background: rgba(74, 222, 128, 0.1); color: var(--success); border: 1px solid rgba(74,222,128,.3); }
@@ -279,7 +364,7 @@
     background: var(--card); border: 1px solid var(--border);
     padding: 12px 20px; border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0,0,0,.5);
-    z-index: 200; transition: transform .3s; font-size: 14px; max-width: 90%;
+    z-index: 200; transition: transform .35s cubic-bezier(0.4, 0, 0.2, 1); font-size: 14px; max-width: 90%;
     display: flex; align-items: center; gap: 10px;
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
@@ -287,16 +372,26 @@
   #toast.success { border-color: var(--success); color: var(--success); }
 
   .receipt {
-    background: #000; border: 1px dashed var(--border); border-radius: 10px;
+    background: var(--bg-2); border: 1px dashed var(--border); border-radius: 10px;
     padding: 14px; font-family: 'Courier New', monospace; font-size: 13px;
     white-space: pre-wrap; line-height: 1.5; margin-top: 12px; color: var(--text);
   }
 
   .admin-badge {
-    display: inline-block; padding: 3px 9px; background: #fff; color: #000;
+    display: inline-block; padding: 3px 9px; background: var(--accent); color: var(--invert);
     border-radius: 20px; font-size: 10px; font-weight: 700;
     text-transform: uppercase; margin-left: 8px; letter-spacing: .5px;
   }
+
+  .badge {
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; letter-spacing: .3px;
+  }
+  .badge.pending { background: rgba(250,204,21,.15); color: var(--warning); border: 1px solid rgba(250,204,21,.3); }
+  .badge.approved { background: rgba(74,222,128,.15); color: var(--success); border: 1px solid rgba(74,222,128,.3); }
+  .badge.rejected { background: rgba(248,113,113,.15); color: var(--danger); border: 1px solid rgba(248,113,113,.3); }
+  .badge.service { background: rgba(168,85,247,.15); color: #a855f7; border: 1px solid rgba(168,85,247,.3); }
+  .badge.frozen { background: rgba(96,165,250,.15); color: #60a5fa; border: 1px solid rgba(96,165,250,.3); }
 
   .hidden { display: none !important; }
 
@@ -305,8 +400,9 @@
     flex: 1; padding: 10px; background: var(--bg-2); border: 1px solid var(--border);
     border-radius: 10px; color: var(--text-dim); cursor: pointer; font-size: 14px;
     font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all .2s;
   }
-  .toggle-btn.active { background: #fff; color: #000; border-color: #fff; font-weight: 600; }
+  .toggle-btn.active { background: var(--accent); color: var(--invert); border-color: var(--accent); font-weight: 600; }
 
   .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; gap: 10px; }
   .info-row:last-child { border-bottom: none; }
@@ -323,16 +419,22 @@
     border: 2px solid transparent; border-top-color: currentColor;
     border-radius: 50%; animation: spin .6s linear infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .service-code-card {
+    background: linear-gradient(135deg, rgba(168,85,247,.08), rgba(168,85,247,.02));
+    border: 1px solid rgba(168,85,247,.25);
+  }
 
   @media (max-width: 600px) {
     .auth-card { padding: 26px 18px; }
     .card { padding: 16px; }
     .balance-card .amount { font-size: 30px; }
+    .user-info .name { font-size: 14px; }
+    .quick-actions { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <!-- ══════════ SVG sprite ══════════ -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
@@ -364,6 +466,14 @@
   <symbol id="i-banknote" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/></symbol>
   <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
   <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+  <symbol id="i-credit-card" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></symbol>
+  <symbol id="i-trending-up" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
 </svg>
 
 <div id="offline">
@@ -374,10 +484,11 @@
 </div>
 
 <div id="toast"></div>
-
 <div id="app"></div>
 
-<!-- Modal: payment code (receive) -->
+<!-- ─── Модальные окна ─── -->
+
+<!-- Код на получение -->
 <div class="modal" id="codeModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -388,7 +499,7 @@
   </div>
 </div>
 
-<!-- Modal: pay by code (send) -->
+<!-- Оплатить по коду -->
 <div class="modal" id="redeemModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -396,10 +507,7 @@
       <button class="modal-close" onclick="closeModal('redeemModal')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div id="redeemModalBody">
-      <p class="hint">
-        Введите код получателя или отсканируйте его QR. Сумма спишется с вашего баланса
-        и уйдёт создателю кода.
-      </p>
+      <p class="hint">Введите код получателя или отсканируйте его QR. Сумма спишется с вашего баланса и уйдёт создателю кода.</p>
       <div class="toggle-group">
         <button class="toggle-btn active" onclick="toggleRedeemMode('scan')"><svg class="ic"><use href="#i-camera"/></svg> Сканировать QR</button>
         <button class="toggle-btn" onclick="toggleRedeemMode('manual')"><svg class="ic"><use href="#i-keyboard"/></svg> Ввести код</button>
@@ -407,17 +515,13 @@
       <div id="redeemScanView">
         <div class="qr-container" style="padding:36px;">
           <svg class="ic ic-lg" style="color:#111;"><use href="#i-camera"/></svg>
-          <p style="color:#111;text-align:center;font-size:14px;">
-            Отсканируйте QR получателя системным сканером<br>
-            <small>и вставьте код во вкладке «Ввести код»</small>
-          </p>
+          <p style="color:#111;text-align:center;font-size:14px;">Отсканируйте QR получателя системным сканером<br><small>и вставьте код во вкладке «Ввести код»</small></p>
         </div>
       </div>
       <div id="redeemManualView" class="hidden">
         <div class="form-group">
           <label>Код перевода (8 символов)</label>
-          <input type="text" id="redeemCode" placeholder="K4M9XB2R" maxlength="8"
-                 style="text-transform:uppercase;letter-spacing:3px;font-family:monospace;text-align:center;font-size:20px;">
+          <input type="text" id="redeemCode" placeholder="K4M9XB2R" maxlength="8" style="text-transform:uppercase;letter-spacing:3px;font-family:monospace;text-align:center;font-size:20px;">
         </div>
       </div>
       <div id="redeemError"></div>
@@ -426,17 +530,14 @@
   </div>
 </div>
 
-<!-- Modal: create receive-code -->
+<!-- Создать код на получение -->
 <div class="modal" id="generateModal">
   <div class="modal-content">
     <div class="modal-header">
       <div class="modal-title"><svg class="ic"><use href="#i-qr"/></svg> Получить деньги</div>
       <button class="modal-close" onclick="closeModal('generateModal')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
-    <p class="hint">
-      Создастся одноразовый код с QR. Покажите его плательщику — он отсканирует код
-      или введёт его вручную, и сумма поступит на ваш баланс.
-    </p>
+    <p class="hint">Создастся одноразовый код с QR. Покажите его плательщику — он отсканирует код или введёт его вручную, и сумма поступит на ваш баланс.</p>
     <div id="generateError"></div>
     <div class="form-group">
       <label>Сумма (ZR)</label>
@@ -460,17 +561,14 @@
   </div>
 </div>
 
-<!-- Modal: direct transfer by receiver_id -->
+<!-- Перевод по ID -->
 <div class="modal" id="byIdModal">
   <div class="modal-content">
     <div class="modal-header">
       <div class="modal-title"><svg class="ic"><use href="#i-send"/></svg> Перевод по ID</div>
       <button class="modal-close" onclick="closeModal('byIdModal')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
-    <p class="hint">
-      Прямой перевод другому пользователю LasBank по его ID.
-      Сумма списывается с вашего баланса и зачисляется получателю.
-    </p>
+    <p class="hint">Прямой перевод другому пользователю LasBank по его ID. Сумма списывается с вашего баланса и зачисляется получателю.</p>
     <div id="byIdError"></div>
     <div class="form-group">
       <label>ID получателя</label>
@@ -494,13 +592,11 @@
       <label>Заметка (необязательно)</label>
       <textarea id="byIdNote" placeholder="Например: за обед"></textarea>
     </div>
-    <button class="btn btn-primary" onclick="transferById()">
-      <svg class="ic"><use href="#i-send"/></svg> Отправить
-    </button>
+    <button class="btn btn-primary" onclick="transferById()"><svg class="ic"><use href="#i-send"/></svg> Отправить</button>
   </div>
 </div>
 
-<!-- Modal: invoice details -->
+<!-- Детали счёта -->
 <div class="modal" id="invoiceModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -511,7 +607,7 @@
   </div>
 </div>
 
-<!-- Modal: receipt -->
+<!-- Чек -->
 <div class="modal" id="receiptModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -522,7 +618,7 @@
   </div>
 </div>
 
-<!-- Modal: admin balance -->
+<!-- Админ: баланс -->
 <div class="modal" id="adminBalanceModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -542,7 +638,7 @@
   </div>
 </div>
 
-<!-- Modal: admin invoice -->
+<!-- Админ: счёт -->
 <div class="modal" id="adminInvoiceModal">
   <div class="modal-content">
     <div class="modal-header">
@@ -570,16 +666,116 @@
   </div>
 </div>
 
+<!-- Админ: сервисный код -->
+<div class="modal" id="adminServiceCodeModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title"><svg class="ic"><use href="#i-gift"/></svg> Создать сервисный код</div>
+      <button class="modal-close" onclick="closeModal('adminServiceCodeModal')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <p class="hint">Сервисный код — бессрочный код, который может активировать любой пользователь. Получатель определяется при активации.</p>
+    <div id="adminServiceCodeError"></div>
+    <div class="form-group">
+      <label>Сумма (ZR)</label>
+      <input type="number" id="scAmount" step="0.01" min="0.01" placeholder="1000.00">
+    </div>
+    <div class="form-group">
+      <label>Тип транзакции</label>
+      <select id="scTxType">
+        <option value="Прочее">Прочее</option>
+        <option value="Перевод">Перевод</option>
+        <option value="ЗП">Зарплата</option>
+        <option value="Оплата">Оплата</option>
+        <option value="Покупка">Покупка</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Заметка (необязательно)</label>
+      <textarea id="scNote" placeholder="приветственный бонус"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="adminCreateServiceCode()"><svg class="ic"><use href="#i-gift"/></svg> Создать код</button>
+  </div>
+</div>
+
+<!-- Активация сервисного кода -->
+<div class="modal" id="serviceRedeemModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title"><svg class="ic"><use href="#i-gift"/></svg> Активировать сервисный код</div>
+      <button class="modal-close" onclick="closeModal('serviceRedeemModal')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <p class="hint">Введите сервисный код, чтобы получить средства на баланс.</p>
+    <div id="serviceRedeemError"></div>
+    <div class="form-group">
+      <label>Сервисный код (8 символов)</label>
+      <input type="text" id="serviceRedeemCode" placeholder="K3M9XQ2P" maxlength="8" style="text-transform:uppercase;letter-spacing:3px;font-family:monospace;text-align:center;font-size:20px;">
+    </div>
+    <button class="btn btn-primary" onclick="redeemServiceCode()"><svg class="ic"><use href="#i-gift"/></svg> Активировать</button>
+  </div>
+</div>
+
+<!-- Админ: кредиты — редактирование заявки -->
+<div class="modal" id="adminLoanModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title"><svg class="ic"><use href="#i-credit-card"/></svg> Рассмотрение заявки</div>
+      <button class="modal-close" onclick="closeModal('adminLoanModal')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <div id="adminLoanError"></div>
+    <div id="adminLoanInfo" style="margin-bottom:16px;"></div>
+    <div class="form-group">
+      <label>Скорректированная сумма (ZR) — оставьте пустым, чтобы не менять</label>
+      <input type="number" id="loanFinalAmount" step="0.01" placeholder="4000.00">
+    </div>
+    <div class="form-group">
+      <label>Скорректированная ставка (%)</label>
+      <input type="number" id="loanFinalRate" step="0.1" placeholder="10.0">
+    </div>
+    <div class="form-group">
+      <label>Комментарий администратора</label>
+      <textarea id="loanAdminComment" placeholder="уменьшили сумму, ставку снизили до 10%"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-success" onclick="adminReviewLoan('approved')"><svg class="ic"><use href="#i-check"/></svg> Одобрить</button>
+      <button class="btn btn-danger" onclick="adminReviewLoan('rejected')"><svg class="ic"><use href="#i-x"/></svg> Отклонить</button>
+    </div>
+    <div style="margin-top:10px;">
+      <button class="btn btn-ghost" style="width:100%;" onclick="adminReviewLoan(null)">Сохранить без решения</button>
+    </div>
+  </div>
+</div>
+
+<!-- Админ: редактирование пользователя -->
+<div class="modal" id="adminUserModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title"><svg class="ic"><use href="#i-users"/></svg> Редактировать пользователя</div>
+      <button class="modal-close" onclick="closeModal('adminUserModal')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <div id="adminUserError"></div>
+    <input type="hidden" id="auUserId">
+    <div class="form-group"><label>Имя</label><input type="text" id="auName"></div>
+    <div class="form-group"><label>E-mail</label><input type="email" id="auEmail"></div>
+    <div class="form-group"><label>Тип</label>
+      <select id="auType"><option value="individual">Физ. лицо</option><option value="legal">Юр. лицо</option></select>
+    </div>
+    <div class="form-group"><label>NYUL</label><input type="text" id="auNyul"></div>
+    <div class="form-group"><label>Баланс (ZR)</label><input type="number" id="auBalance" step="0.01"></div>
+    <div class="form-group"><label>Новый пароль (мин. 6 символов, опционально)</label><input type="password" id="auPassword" placeholder="оставьте пустым, чтобы не менять"></div>
+    <div class="checkbox-row"><input type="checkbox" id="auIsAdmin"><label for="auIsAdmin">Администратор</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="auIsFrozen"><label for="auIsFrozen">Заморожен</label></div>
+    <button class="btn btn-primary" onclick="adminSaveUser()"><svg class="ic"><use href="#i-check"/></svg> Сохранить</button>
+  </div>
+</div>
+
 <script>
 const BASE_URL = 'https://lasbank.cloudpub.ru';
 const PRIVACY_URL = 'https://las-bank.github.io/privacy-policy';
 
-// SVG icon helper
 function ic(name, sizeCls) {
   return `<svg class="ic ${sizeCls || ''}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 }
 
-// Безопасное хранилище (fallback для file://)
 const storage = (() => {
   try {
     const k = '__lb_test__';
@@ -598,12 +794,30 @@ const storage = (() => {
 
 let state = { user: null, token: null, view: 'dashboard', adminSub: 'users' };
 let JWT_SUB_BUG = false;
-
-// Счета: кэш + выборочная оплата
 let invoiceCache = [];
 let selectedInvoices = new Set();
+let txCache = [];
+let adminUsersCache = [];
+let adminLoansCache = [];
+let adminInvoicesCache = [];
+let adminServiceCodesCache = [];
+let adminTxCache = [];
 
-// ───────── JWT-диагностика ─────────
+/* ─── Тема ─── */
+function applyTheme(theme) {
+  document.body.setAttribute('data-theme', theme);
+  storage.setItem('lb_theme', theme);
+}
+function toggleTheme() {
+  const cur = document.body.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+function initTheme() {
+  const saved = storage.getItem('lb_theme') || 'dark';
+  applyTheme(saved);
+}
+
+/* ─── JWT ─── */
 function decodeJwtPayload(token) {
   try {
     const b64 = String(token).split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
@@ -611,18 +825,17 @@ function decodeJwtPayload(token) {
     return JSON.parse(json);
   } catch (e) { return null; }
 }
-
 function checkToken() {
   JWT_SUB_BUG = false;
   if (!state.token) return;
   const p = decodeJwtPayload(state.token);
   if (p && p.sub !== undefined && typeof p.sub !== 'string') {
     JWT_SUB_BUG = true;
-    console.error('⚠️ Баг бэкенда: sub в JWT не строка → 422 "Subject must be a string". Fix: "sub": str(user.id)');
+    console.error('⚠️ Баг бэкенда: sub в JWT не строка → 422.');
   }
 }
 
-// ───────── State ─────────
+/* ─── State ─── */
 function loadState() {
   const token = storage.getItem('lb_token');
   const user = storage.getItem('lb_user');
@@ -632,7 +845,6 @@ function loadState() {
     checkToken();
   }
 }
-
 function saveState() {
   if (state.token && state.user) {
     storage.setItem('lb_token', state.token);
@@ -643,23 +855,18 @@ function saveState() {
   }
 }
 
-// ───────── API ────────
+/* ─── API ─── */
 async function api(method, path, body = null) {
   const headers = {};
   if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
   if (body !== null) headers['Content-Type'] = 'application/json';
-
   let response;
   try {
-    response = await fetch(BASE_URL + path, {
-      method, headers,
-      body: body !== null ? JSON.stringify(body) : null,
-    });
+    response = await fetch(BASE_URL + path, { method, headers, body: body !== null ? JSON.stringify(body) : null });
   } catch (e) {
     showOffline();
     throw new Error('OFFLINE');
   }
-
   let data = null;
   const ct = response.headers.get('content-type') || '';
   if (ct.includes('application/json')) {
@@ -667,7 +874,6 @@ async function api(method, path, body = null) {
   } else {
     data = await response.text();
   }
-
   if (!response.ok) {
     const raw = JSON.stringify(data);
     if (raw && raw.includes('Subject must be a string')) JWT_SUB_BUG = true;
@@ -688,7 +894,7 @@ async function refreshMe() {
     const me = await api('GET', '/api/me');
     state.user = me;
     saveState();
-  } catch (e) { /* оффлайн/401 обработаны внутри */ }
+  } catch (e) {}
 }
 
 function showOffline() { document.getElementById('offline').classList.add('show'); }
@@ -720,7 +926,7 @@ function alertBox(type, msg) {
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-// ───────── Render ─────────
+/* ─── Render ─── */
 function render() {
   const app = document.getElementById('app');
   if (!state.token || !state.user) {
@@ -731,12 +937,19 @@ function render() {
       if (state.view === 'dashboard') loadDashboard();
       else if (state.view === 'transactions') loadTransactions();
       else if (state.view === 'invoices') loadInvoices();
+      else if (state.view === 'loans') loadMyLoans();
       else if (state.view === 'admin') loadAdmin();
     }, 10);
   }
 }
 
+function themeToggleBtn() {
+  const cur = document.body.getAttribute('data-theme');
+  return `<button class="theme-toggle" onclick="toggleTheme()" title="Сменить тему">${cur === 'dark' ? ic('sun') : ic('moon')}</button>`;
+}
+
 function renderAuth() {
+  const cur = document.body.getAttribute('data-theme');
   return `
     <div class="auth-screen">
       <div class="auth-card">
@@ -746,6 +959,7 @@ function renderAuth() {
             <div style="font-size:20px;font-weight:700;">LasBank</div>
             <div style="font-size:12px;color:var(--text-dim);">Зефирский банк</div>
           </div>
+          <div style="margin-left:auto;">${themeToggleBtn()}</div>
         </div>
         <h1>Добро пожаловать</h1>
         <p class="subtitle">Войдите или создайте новый аккаунт</p>
@@ -755,40 +969,21 @@ function renderAuth() {
         </div>
         <div id="authError"></div>
         <div id="loginForm">
-          <div class="form-group">
-            <label>E-mail</label>
-            <input type="email" id="loginEmail" placeholder="ivan@example.com">
-          </div>
-          <div class="form-group">
-            <label>Пароль</label>
-            <input type="password" id="loginPassword" placeholder="secret123">
-          </div>
+          <div class="form-group"><label>E-mail</label><input type="email" id="loginEmail" placeholder="ivan@example.com"></div>
+          <div class="form-group"><label>Пароль</label><input type="password" id="loginPassword" placeholder="secret123"></div>
           <button class="btn btn-primary" onclick="doLogin()">Войти</button>
         </div>
         <div id="registerForm" class="hidden">
-          <div class="form-group">
-            <label>Имя / Название</label>
-            <input type="text" id="regName" placeholder="Ivan Petrov">
-          </div>
-          <div class="form-group">
-            <label>E-mail</label>
-            <input type="email" id="regEmail" placeholder="ivan@example.com">
-          </div>
-          <div class="form-group">
-            <label>Пароль (мин. 6 символов)</label>
-            <input type="password" id="regPassword" placeholder="••••••">
-          </div>
-          <div class="form-group">
-            <label>Тип аккаунта</label>
+          <div class="form-group"><label>Имя / Название</label><input type="text" id="regName" placeholder="Ivan Petrov"></div>
+          <div class="form-group"><label>E-mail</label><input type="email" id="regEmail" placeholder="ivan@example.com"></div>
+          <div class="form-group"><label>Пароль (мин. 6 символов)</label><input type="password" id="regPassword" placeholder="••••••"></div>
+          <div class="form-group"><label>Тип аккаунта</label>
             <select id="regType" onchange="toggleNyul()">
               <option value="individual">Физ. лицо</option>
               <option value="legal">Юр. лицо</option>
             </select>
           </div>
-          <div class="form-group hidden" id="nyulGroup">
-            <label>NYUL (номер юр. лица)</label>
-            <input type="text" id="regNyul" placeholder="ZR-7712345678">
-          </div>
+          <div class="form-group hidden" id="nyulGroup"><label>NYUL (номер юр. лица)</label><input type="text" id="regNyul" placeholder="ZR-7712345678"></div>
           <div class="checkbox-row">
             <input type="checkbox" id="regPrivacy">
             <label for="regPrivacy">Я принимаю <a href="${PRIVACY_URL}" target="_blank">политику конфиденциальности</a></label>
@@ -864,6 +1059,7 @@ function renderMain() {
   const u = state.user;
   const bugBanner = JWT_SUB_BUG ? alertBox('error',
     `<b>Диагностика:</b> сервер выдал JWT с полем <code>sub</code> типа number — такие токены он сам отклоняет (<code>422 Subject must be a string</code>). Фикс бэкенда: <code>"sub": str(user.id)</code>. После фикса — перелогинься.`) : '';
+  const frozenBanner = u.is_frozen ? alertBox('info', `${ic('lock')} Ваш аккаунт заморожен администратором. Действия с балансом недоступны, но вы можете просматривать данные.`) : '';
   return `
     <div class="container">
       <div class="header">
@@ -873,17 +1069,19 @@ function renderMain() {
         </div>
         <div class="user-info">
           <div>
-            <div class="name">${escapeHtml(u.name)}</div>
+            <div class="name">${escapeHtml(u.name)} ${u.is_frozen ? '<span class="badge frozen">Заморожен</span>' : ''}</div>
             <div style="font-size:12px;color:var(--text-dim);">${escapeHtml(u.email)}</div>
           </div>
+          ${themeToggleBtn()}
           <button class="logout-btn" onclick="logout()">${ic('logout', 'ic')} Выйти</button>
         </div>
       </div>
-      ${bugBanner}
+      ${bugBanner}${frozenBanner}
       <div class="tabs">
         <button class="tab ${state.view === 'dashboard' ? 'active' : ''}" onclick="setView('dashboard')">${ic('home')} Главная</button>
         <button class="tab ${state.view === 'transactions' ? 'active' : ''}" onclick="setView('transactions')">${ic('clock')} История</button>
         <button class="tab ${state.view === 'invoices' ? 'active' : ''}" onclick="setView('invoices')">${ic('file')} Счета</button>
+        <button class="tab ${state.view === 'loans' ? 'active' : ''}" onclick="setView('loans')">${ic('credit-card')} Кредиты</button>
         ${u.is_admin ? `<button class="tab ${state.view === 'admin' ? 'active' : ''}" onclick="setView('admin')">${ic('shield')} Админка</button>` : ''}
       </div>
       <div id="viewContent"></div>
@@ -893,7 +1091,7 @@ function renderMain() {
 
 function setView(v) { state.view = v; render(); }
 
-// ───────── Dashboard ─────────
+/* ─── Dashboard ─── */
 async function loadDashboard() {
   const vc = document.getElementById('viewContent');
   vc.innerHTML = `
@@ -908,37 +1106,41 @@ async function loadDashboard() {
     state.user = me; saveState();
     vc.innerHTML = renderDashboard();
   } catch (e) {
-    if (e.message !== 'OFFLINE') {
-      vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-    }
+    if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
   }
 }
 
 function renderDashboard() {
   const u = state.user;
+  const frozen = u.is_frozen;
+  const dis = frozen ? 'disabled' : '';
   return `
     <div class="grid grid-cards" style="margin-bottom:18px;">
-      <div class="card balance-card">
+      <div class="card balance-card anim-up">
         <div class="label">${ic('wallet')} Текущий баланс</div>
         <div class="amount">${formatNumber(u.balance)}<small>ZR</small></div>
         <div class="footer-info">${u.user_type === 'legal' ? 'Юр. лицо' : 'Физ. лицо'} · ID ${u.id}</div>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:18px;">
+    <div class="card anim-up" style="margin-bottom:18px;">
       <div class="section-title">${ic('send')} Действия</div>
       <div class="quick-actions">
-        <button class="quick-action" onclick="openModal('generateModal')">
+        <button class="quick-action" ${dis} onclick="openModal('generateModal')">
           <span class="qa-icon">${ic('qr', 'ic-lg')}</span>
           <span class="label">Получить деньги</span>
         </button>
-        <button class="quick-action" onclick="openModal('redeemModal')">
+        <button class="quick-action" ${dis} onclick="openModal('redeemModal')">
           <span class="qa-icon">${ic('scan', 'ic-lg')}</span>
           <span class="label">Оплатить по коду</span>
         </button>
-        <button class="quick-action" onclick="openModal('byIdModal')">
+        <button class="quick-action" ${dis} onclick="openModal('byIdModal')">
           <span class="qa-icon">${ic('user-plus', 'ic-lg')}</span>
           <span class="label">Перевод по ID</span>
+        </button>
+        <button class="quick-action" ${dis} onclick="openModal('serviceRedeemModal')">
+          <span class="qa-icon">${ic('gift', 'ic-lg')}</span>
+          <span class="label">Сервисный код</span>
         </button>
         <button class="quick-action" onclick="setView('transactions')">
           <span class="qa-icon">${ic('clock', 'ic-lg')}</span>
@@ -948,22 +1150,26 @@ function renderDashboard() {
           <span class="qa-icon">${ic('file', 'ic-lg')}</span>
           <span class="label">Счета</span>
         </button>
+        <button class="quick-action" onclick="setView('loans')">
+          <span class="qa-icon">${ic('credit-card', 'ic-lg')}</span>
+          <span class="label">Кредиты</span>
+        </button>
       </div>
     </div>
 
-    <div class="card">
+    <div class="card anim-up">
       <div class="section-title">${ic('info')} Информация</div>
       <div class="info-row"><span class="label">Имя</span><span class="value">${escapeHtml(u.name)}</span></div>
       <div class="info-row"><span class="label">E-mail</span><span class="value">${escapeHtml(u.email)}</span></div>
       <div class="info-row"><span class="label">Ваш ID</span><span class="value" style="font-family:monospace;">${u.id}</span></div>
       <div class="info-row"><span class="label">Тип аккаунта</span><span class="value">${u.user_type === 'legal' ? 'Юр. лицо' : 'Физ. лицо'}</span></div>
       ${u.nyul ? `<div class="info-row"><span class="label">NYUL</span><span class="value" style="font-family:monospace;">${escapeHtml(u.nyul)}</span></div>` : ''}
+      ${u.is_frozen ? `<div class="info-row"><span class="label">Статус</span><span class="value" style="color:var(--warning)">Заморожен</span></div>` : ''}
     </div>
   `;
 }
 
-// ───────── Переводы ─────────
-// Создать код = ПОЛУЧИТЬ деньги: плательщик сканирует/вводит код и отправляет сумму создателю.
+/* ─── Переводы ─── */
 async function generateCode() {
   const amount = parseFloat(document.getElementById('genAmount').value);
   const tx_type = document.getElementById('genType').value;
@@ -993,9 +1199,7 @@ function showCodeDisplay(data) {
       <div class="code-text">${escapeHtml(data.code)}</div>
       <div class="amount-display">+${formatNumber(data.amount)} ZR вам</div>
     </div>
-    <div style="text-align:center;font-size:13px;color:var(--text-dim);">
-      Действует до: ${new Date(data.expires_at).toLocaleString('ru-RU')}
-    </div>
+    <div style="text-align:center;font-size:13px;color:var(--text-dim);">Действует до: ${new Date(data.expires_at).toLocaleString('ru-RU')}</div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="copyCode('${escapeHtml(data.code)}')">${ic('copy')} Скопировать код</button>
       <button class="btn btn-ghost" onclick="closeModal('codeModal')">Закрыть</button>
@@ -1011,12 +1215,9 @@ function showCodeDisplay(data) {
 }
 
 function copyCode(code) {
-  navigator.clipboard.writeText(code)
-    .then(() => toast('Код скопирован', 'success'))
-    .catch(() => toast('Не удалось скопировать', 'error'));
+  navigator.clipboard.writeText(code).then(() => toast('Код скопирован', 'success')).catch(() => toast('Не удалось скопировать', 'error'));
 }
 
-// Оплатить по коду = ОТПРАВИТЬ деньги создателю кода.
 function toggleRedeemMode(mode) {
   document.querySelectorAll('#redeemModal .toggle-btn').forEach((b, i) => {
     b.classList.toggle('active', (mode === 'scan' && i === 0) || (mode === 'manual' && i === 1));
@@ -1044,42 +1245,23 @@ async function redeemCode() {
   }
 }
 
-// Прямой перевод по receiver_id + amount
 async function transferById() {
   const receiver_id = parseInt(document.getElementById('byIdReceiver').value, 10);
   const amount = parseFloat(document.getElementById('byIdAmount').value);
   const tx_type = document.getElementById('byIdType').value;
   const note = document.getElementById('byIdNote').value.trim();
   const err = document.getElementById('byIdError');
-
-  if (!receiver_id || receiver_id <= 0) {
-    err.innerHTML = alertBox('error', 'Укажите корректный ID получателя');
-    return;
-  }
-  if (!amount || amount <= 0) {
-    err.innerHTML = alertBox('error', 'Укажите корректную сумму');
-    return;
-  }
-  if (receiver_id === state.user.id) {
-    err.innerHTML = alertBox('error', 'Нельзя перевести самому себе');
-    return;
-  }
-
+  if (!receiver_id || receiver_id <= 0) { err.innerHTML = alertBox('error', 'Укажите корректный ID получателя'); return; }
+  if (!amount || amount <= 0) { err.innerHTML = alertBox('error', 'Укажите корректную сумму'); return; }
+  if (receiver_id === state.user.id) { err.innerHTML = alertBox('error', 'Нельзя перевести самому себе'); return; }
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Отправляем...</span></div>';
-
   try {
-    const data = await api('POST', '/api/transfer/by-id', {
-      receiver_id,
-      amount,
-      tx_type,
-      note: note || null,
-    });
+    const data = await api('POST', '/api/transfer/by-id', { receiver_id, amount, tx_type, note: note || null });
     closeModal('byIdModal');
     document.getElementById('byIdReceiver').value = '';
     document.getElementById('byIdAmount').value = '';
     document.getElementById('byIdNote').value = '';
     err.innerHTML = '';
-
     await refreshMe();
     render();
     toast('Перевод отправлен', 'success');
@@ -1090,7 +1272,28 @@ async function transferById() {
   }
 }
 
-// ───────── История ─────────
+/* ─── Сервисный код ─── */
+async function redeemServiceCode() {
+  const code = (document.getElementById('serviceRedeemCode').value || '').trim().toUpperCase();
+  const err = document.getElementById('serviceRedeemError');
+  if (!code || code.length < 6) { err.innerHTML = alertBox('error', 'Введите корректный код'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Активируем...</span></div>';
+  try {
+    const data = await api('POST', '/api/service-code/redeem', { code });
+    closeModal('serviceRedeemModal');
+    document.getElementById('serviceRedeemCode').value = '';
+    err.innerHTML = '';
+    await refreshMe();
+    render();
+    toast('Сервисный код активирован!', 'success');
+    if (data.transaction) showReceipt(data.transaction, 'Сервисный код активирован');
+  } catch (e) {
+    if (e.message === 'OFFLINE') return;
+    err.innerHTML = alertBox('error', escapeHtml(e.message));
+  }
+}
+
+/* ─── История ─── */
 async function loadTransactions() {
   const vc = document.getElementById('viewContent');
   vc.innerHTML = `<div class="card"><div class="section-title">${ic('clock')} Моя история</div><div class="empty-state"><span class="spinner"></span></div></div>`;
@@ -1098,11 +1301,9 @@ async function loadTransactions() {
     const txs = await api('GET', '/api/transactions');
     txCache = txs;
     vc.innerHTML = `
-      <div class="card">
+      <div class="card anim-up">
         <div class="section-title">${ic('clock')} Моя история</div>
-        ${txs.length === 0 ? `
-          <div class="empty-state">${ic('inbox', 'ic-lg')}<div>Пока нет транзакций</div></div>
-        ` : txs.map(renderTransaction).join('')}
+        ${txs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Пока нет транзакций</div></div>` : txs.map(renderTransaction).join('')}
       </div>`;
   } catch (e) {
     if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
@@ -1110,8 +1311,10 @@ async function loadTransactions() {
 }
 
 function renderTransaction(t) {
-  const isIn = t.receiver_id === state.user.id;
-  const other = isIn ? t.sender_name : t.receiver_name;
+  const uid = state.user.id;
+  const isIn = t.receiver_id === uid;
+  const isSystem = t.sender_id === null;
+  const other = isSystem ? 'Система' : (isIn ? t.sender_name : t.receiver_name);
   const arrow = isIn ? 'receive' : 'send';
   const sign = isIn ? '+' : '−';
   const dt = new Date(t.created_at).toLocaleString('ru-RU');
@@ -1121,6 +1324,7 @@ function renderTransaction(t) {
         <div class="title" style="display:flex;align-items:center;gap:8px;">
           <span style="color:${isIn ? 'var(--success)' : 'var(--danger)'}">${ic(arrow)}</span>
           ${escapeHtml(other)} ${t.tx_type ? '· ' + escapeHtml(t.tx_type) : ''}
+          ${isSystem ? '<span class="badge service">система</span>' : ''}
         </div>
         <div class="meta">${dt}${t.note ? ' · ' + escapeHtml(t.note) : ''}</div>
       </div>
@@ -1131,29 +1335,33 @@ function renderTransaction(t) {
     </div>`;
 }
 
-let txCache = [];
-function showReceiptById(id) {
-  const tx = txCache.find(t => t.id === id);
-  if (tx) showReceipt(tx, 'Чек');
+async function showReceiptById(id) {
+  try {
+    const data = await api('GET', `/api/transactions/${id}/receipt`);
+    showReceiptData(data);
+  } catch (e) {
+    if (e.message !== 'OFFLINE') toast(e.message, 'error');
+  }
 }
 
-function showReceipt(tx, title) {
+function showReceiptData(data) {
   const body = document.getElementById('receiptModalBody');
+  const isIn = data.receiver_name === (state.user && state.user.name);
   body.innerHTML = `
-    <h3 style="margin-bottom:12px;">${escapeHtml(title || 'Чек')}</h3>
-    <div class="info-row"><span class="label">Отправитель</span><span class="value">${escapeHtml(tx.sender_name)}</span></div>
-    <div class="info-row"><span class="label">Получатель</span><span class="value">${escapeHtml(tx.receiver_name)}</span></div>
-    <div class="info-row"><span class="label">Сумма</span><span class="value">${formatNumber(tx.amount)} ZR</span></div>
-    <div class="info-row"><span class="label">Тип</span><span class="value">${escapeHtml(tx.tx_type)}</span></div>
-    <div class="info-row"><span class="label">Дата</span><span class="value">${new Date(tx.created_at).toLocaleString('ru-RU')}</span></div>
-    ${tx.note ? `<div class="info-row"><span class="label">Заметка</span><span class="value">${escapeHtml(tx.note)}</span></div>` : ''}
-    ${tx.receipt ? `<div class="receipt">${escapeHtml(tx.receipt)}</div>` : ''}
+    <h3 style="margin-bottom:12px;">Чек</h3>
+    <div class="info-row"><span class="label">Отправитель</span><span class="value">${escapeHtml(data.sender_name)}</span></div>
+    <div class="info-row"><span class="label">Получатель</span><span class="value">${escapeHtml(data.receiver_name)}</span></div>
+    <div class="info-row"><span class="label">Сумма</span><span class="value" style="color:${isIn ? 'var(--success)' : 'var(--danger)'};font-weight:700;">${isIn ? '+' : '−'}${formatNumber(data.amount)} ZR</span></div>
+    <div class="info-row"><span class="label">Тип</span><span class="value">${escapeHtml(data.tx_type)}</span></div>
+    <div class="info-row"><span class="label">Дата</span><span class="value">${new Date(data.created_at).toLocaleString('ru-RU')}</span></div>
+    ${data.note ? `<div class="info-row"><span class="label">Заметка</span><span class="value">${escapeHtml(data.note)}</span></div>` : ''}
+    ${data.receipt ? `<div class="receipt">${escapeHtml(data.receipt)}</div>` : ''}
     <button class="btn btn-ghost" style="margin-top:14px;width:100%;" onclick="closeModal('receiptModal')">Закрыть</button>
   `;
   openModal('receiptModal');
 }
 
-// ───────── Счета + выборочная оплата ─────────
+/* ─── Счета ─── */
 async function loadInvoices() {
   const vc = document.getElementById('viewContent');
   vc.innerHTML = `<div class="card"><div class="section-title">${ic('file')} Мои счета</div><div class="empty-state"><span class="spinner"></span></div></div>`;
@@ -1170,7 +1378,7 @@ async function loadInvoices() {
 function renderInvoices() {
   const invs = invoiceCache;
   if (!invs.length) {
-    return `<div class="card">
+    return `<div class="card anim-up">
       <div class="section-title">${ic('file')} Неоплаченные счета</div>
       <div class="empty-state">${ic('check', 'ic-lg')}<div>Нет неоплаченных счетов</div></div>
     </div>`;
@@ -1178,7 +1386,7 @@ function renderInvoices() {
   const sel = invs.filter(i => selectedInvoices.has(i.id));
   const selSum = sel.reduce((s, i) => s + i.amount, 0);
   return `
-    <div class="card">
+    <div class="card anim-up">
       <div class="section-title">${ic('file')} Неоплаченные счета</div>
       <div class="bulk-bar">
         <label class="check">
@@ -1272,23 +1480,91 @@ async function payInvoice(id) {
     await refreshMe();
     render();
     toast('Счёт оплачен', 'success');
-    if (data.transaction) showReceipt(data.transaction, 'Счёт оплачен');
+    if (data.transaction) showReceiptData(data.transaction);
   } catch (e) {
     if (e.message === 'OFFLINE') return;
     err.innerHTML = alertBox('error', escapeHtml(e.message));
   }
 }
 
-// ───────── Админка ─────────
+/* ─── Кредиты (пользователь) ─── */
+async function loadMyLoans() {
+  const vc = document.getElementById('viewContent');
+  vc.innerHTML = `<div class="card"><div class="section-title">${ic('credit-card')} Мои кредиты</div><div class="empty-state"><span class="spinner"></span></div></div>`;
+  try {
+    const loans = await api('GET', '/api/loans');
+    vc.innerHTML = renderMyLoans(loans);
+  } catch (e) {
+    if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
+  }
+}
+
+function renderMyLoans(loans) {
+  return `
+    <div class="card anim-up" style="margin-bottom:18px;">
+      <div class="section-title">${ic('credit-card')} Заявка на кредит</div>
+      <p class="hint">Укажите сумму, ставку и цель кредита. Администратор рассмотрит заявку и сможет скорректировать условия.</p>
+      <div id="loanError"></div>
+      <div class="form-group"><label>Сумма (ZR)</label><input type="number" id="loanAmount" step="0.01" min="0.01" placeholder="5000.00"></div>
+      <div class="form-group"><label>Ставка (% годовых, от 0 до 100)</label><input type="number" id="loanRate" step="0.1" min="0.1" max="100" placeholder="12.5"></div>
+      <div class="form-group"><label>Цель кредита</label><textarea id="loanPurpose" placeholder="покупка ноутбука для работы"></textarea></div>
+      <button class="btn btn-primary" onclick="createLoanRequest()"><svg class="ic"><use href="#i-credit-card"/></svg> Отправить заявку</button>
+    </div>
+    <div class="card anim-up">
+      <div class="section-title">${ic('clock')} Мои заявки</div>
+      ${loans.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>У вас пока нет заявок</div></div>` : loans.map(renderLoanItem).join('')}
+    </div>
+  `;
+}
+
+function renderLoanItem(l) {
+  const dt = new Date(l.created_at).toLocaleString('ru-RU');
+  const statusMap = { pending: 'На рассмотрении', approved: 'Одобрен', rejected: 'Отклонён' };
+  const statusCls = { pending: 'pending', approved: 'approved', rejected: 'rejected' };
+  return `
+    <div class="list-item">
+      <div class="left">
+        <div class="title">Заявка #${l.id} · <span class="badge ${statusCls[l.status]}">${statusMap[l.status]}</span></div>
+        <div class="meta">${dt} · Цель: ${escapeHtml(l.purpose)}</div>
+        <div class="meta">Запрошено: ${formatNumber(l.amount)} ZR под ${l.rate}%${l.final_amount ? ' · Итог: ' + formatNumber(l.final_amount) + ' ZR под ' + l.final_rate + '%' : ''}</div>
+        ${l.admin_comment ? `<div class="meta" style="margin-top:4px;color:var(--warning);">💬 ${escapeHtml(l.admin_comment)}</div>` : ''}
+      </div>
+      <div class="amount">${formatNumber(l.amount)} ZR</div>
+    </div>`;
+}
+
+async function createLoanRequest() {
+  const amount = parseFloat(document.getElementById('loanAmount').value);
+  const rate = parseFloat(document.getElementById('loanRate').value);
+  const purpose = document.getElementById('loanPurpose').value.trim();
+  const err = document.getElementById('loanError');
+  if (!amount || amount <= 0) { err.innerHTML = alertBox('error', 'Сумма должна быть > 0'); return; }
+  if (!rate || rate <= 0 || rate > 100) { err.innerHTML = alertBox('error', 'Ставка должна быть в диапазоне (0, 100]'); return; }
+  if (!purpose) { err.innerHTML = alertBox('error', 'Укажите цель кредита'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Отправляем заявку...</span></div>';
+  try {
+    await api('POST', '/api/loans', { amount, rate, purpose });
+    toast('Заявка отправлена', 'success');
+    loadMyLoans();
+  } catch (e) {
+    if (e.message === 'OFFLINE') return;
+    err.innerHTML = alertBox('error', escapeHtml(e.message));
+  }
+}
+
+/* ─── Админка ─── */
 async function loadAdmin() {
   if (!state.user.is_admin) return;
   const vc = document.getElementById('viewContent');
   vc.innerHTML = `
-    <div class="card" style="margin-bottom:18px;">
+    <div class="card anim-up" style="margin-bottom:18px;">
       <div class="section-title">${ic('shield')} Админ-панель</div>
       <div class="tabs" style="margin-bottom:0;">
         <button class="tab ${state.adminSub === 'users' ? 'active' : ''}" onclick="setAdminSub('users')">${ic('users')} Пользователи</button>
-        <button class="tab ${state.adminSub === 'txs' ? 'active' : ''}" onclick="setAdminSub('txs')">${ic('clock')} Все транзакции</button>
+        <button class="tab ${state.adminSub === 'loans' ? 'active' : ''}" onclick="setAdminSub('loans')">${ic('credit-card')} Кредиты</button>
+        <button class="tab ${state.adminSub === 'txs' ? 'active' : ''}" onclick="setAdminSub('txs')">${ic('clock')} Транзакции</button>
+        <button class="tab ${state.adminSub === 'invoices' ? 'active' : ''}" onclick="setAdminSub('invoices')">${ic('file')} Счета</button>
+        <button class="tab ${state.adminSub === 'service' ? 'active' : ''}" onclick="setAdminSub('service')">${ic('gift')} Сервисные коды</button>
         <button class="tab ${state.adminSub === 'tools' ? 'active' : ''}" onclick="setAdminSub('tools')">${ic('wrench')} Инструменты</button>
       </div>
     </div>
@@ -1300,7 +1576,10 @@ function setAdminSub(s) { state.adminSub = s; loadAdmin(); }
 
 async function loadAdminSub() {
   if (state.adminSub === 'users') await loadAdminUsers();
+  else if (state.adminSub === 'loans') await loadAdminLoans();
   else if (state.adminSub === 'txs') await loadAdminTxs();
+  else if (state.adminSub === 'invoices') await loadAdminInvoices();
+  else if (state.adminSub === 'service') await loadAdminServiceCodes();
   else renderAdminTools();
 }
 
@@ -1309,16 +1588,48 @@ async function loadAdminUsers() {
   el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
   try {
     const users = await api('GET', '/api/admin/users');
+    adminUsersCache = users;
     el.innerHTML = `
-      <div class="card">
+      <div class="card anim-up">
         <div class="section-title">${ic('users')} Все пользователи (${users.length})</div>
         ${users.map(u => `
           <div class="list-item">
             <div class="left">
-              <div class="title">${escapeHtml(u.name)} ${u.is_admin ? '<span class="admin-badge">Admin</span>' : ''}</div>
+              <div class="title">${escapeHtml(u.name)} ${u.is_admin ? '<span class="admin-badge">Admin</span>' : ''} ${u.is_frozen ? '<span class="badge frozen">Заморожен</span>' : ''}</div>
               <div class="meta">ID ${u.id} · ${escapeHtml(u.email)} · ${u.user_type === 'legal' ? 'Юр. лицо' : 'Физ. лицо'}${u.nyul ? ' · ' + escapeHtml(u.nyul) : ''}</div>
             </div>
-            <div class="amount ${u.balance >= 0 ? 'in' : 'out'}">${formatNumber(u.balance)} ZR</div>
+            <div class="row-actions">
+              <div class="amount ${u.balance >= 0 ? 'in' : 'out'}">${formatNumber(u.balance)} ZR</div>
+              <button class="btn btn-ghost btn-icon" title="Редактировать" onclick="openAdminUserModal(${u.id})">${ic('edit')}</button>
+              <button class="btn btn-danger btn-icon" title="Удалить" onclick="adminDeleteUser(${u.id})">${ic('trash')}</button>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } catch (e) {
+    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
+  }
+}
+
+async function loadAdminLoans() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
+  try {
+    const loans = await api('GET', '/api/admin/loans');
+    adminLoansCache = loans;
+    el.innerHTML = `
+      <div class="card anim-up">
+        <div class="section-title">${ic('credit-card')} Кредитные заявки (${loans.length})</div>
+        ${loans.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет заявок</div></div>` : loans.map(l => `
+          <div class="list-item">
+            <div class="left">
+              <div class="title">#${l.id} · ${escapeHtml(l.user_name)} <span class="badge ${l.status === 'pending' ? 'pending' : l.status === 'approved' ? 'approved' : 'rejected'}">${l.status === 'pending' ? 'На рассмотрении' : l.status === 'approved' ? 'Одобрен' : 'Отклонён'}</span></div>
+              <div class="meta">${new Date(l.created_at).toLocaleString('ru-RU')} · Цель: ${escapeHtml(l.purpose)}</div>
+              <div class="meta">Запрошено: ${formatNumber(l.amount)} ZR под ${l.rate}%${l.final_amount ? ' · Итог: ' + formatNumber(l.final_amount) + ' ZR под ' + l.final_rate + '%' : ''}</div>
+              ${l.admin_comment ? `<div class="meta" style="color:var(--warning);">💬 ${escapeHtml(l.admin_comment)}</div>` : ''}
+            </div>
+            <div class="row-actions">
+              ${l.status === 'pending' ? `<button class="btn btn-secondary btn-sm" onclick="openAdminLoanModal(${l.id})">${ic('edit')} Рассмотреть</button>` : ''}
+            </div>
           </div>`).join('')}
       </div>`;
   } catch (e) {
@@ -1331,14 +1642,14 @@ async function loadAdminTxs() {
   el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
   try {
     const txs = await api('GET', '/api/admin/transactions');
-    txCache = txs;
+    adminTxCache = txs;
     el.innerHTML = `
-      <div class="card">
+      <div class="card anim-up">
         <div class="section-title">${ic('clock')} Все транзакции (${txs.length})</div>
         ${txs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет транзакций</div></div>` : txs.map(t => `
           <div class="list-item">
             <div class="left">
-              <div class="title">#${t.id} · ${escapeHtml(t.sender_name)} → ${escapeHtml(t.receiver_name)} · ${escapeHtml(t.tx_type)}</div>
+              <div class="title">#${t.id} · ${escapeHtml(t.sender_name || 'SYSTEM')} → ${escapeHtml(t.receiver_name || 'SYSTEM')} · ${escapeHtml(t.tx_type)}</div>
               <div class="meta">${new Date(t.created_at).toLocaleString('ru-RU')}${t.note ? ' · ' + escapeHtml(t.note) : ''}</div>
             </div>
             <div class="row-actions">
@@ -1354,22 +1665,81 @@ async function loadAdminTxs() {
   }
 }
 
+async function loadAdminInvoices() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
+  try {
+    const invs = await api('GET', '/api/admin/invoices');
+    adminInvoicesCache = invs;
+    el.innerHTML = `
+      <div class="card anim-up">
+        <div class="section-title">${ic('file')} Все счета (${invs.length})</div>
+        ${invs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет счетов</div></div>` : invs.map(i => `
+          <div class="list-item">
+            <div class="left">
+              <div class="title">#${i.id} · ${escapeHtml(i.from_name)} → ${escapeHtml(i.to_name)} <span class="badge ${i.status === 'paid' ? 'approved' : 'pending'}">${i.status === 'paid' ? 'Оплачен' : 'Ожидает'}</span></div>
+              <div class="meta">${new Date(i.created_at).toLocaleString('ru-RU')}${i.description ? ' · ' + escapeHtml(i.description) : ''}</div>
+            </div>
+            <div class="row-actions">
+              <div class="amount">${formatNumber(i.amount)} ZR</div>
+              ${i.status !== 'paid' ? `<button class="btn btn-secondary btn-icon" title="Изменить" onclick="adminEditInvoice(${i.id})">${ic('edit')}</button>` : ''}
+              ${i.status !== 'paid' ? `<button class="btn btn-danger btn-icon" title="Удалить" onclick="adminDeleteInvoice(${i.id})">${ic('trash')}</button>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } catch (e) {
+    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
+  }
+}
+
+async function loadAdminServiceCodes() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
+  try {
+    const codes = await api('GET', '/api/admin/service-codes');
+    adminServiceCodesCache = codes;
+    el.innerHTML = `
+      <div class="card anim-up">
+        <div class="section-title">${ic('gift')} Сервисные коды (${codes.length})</div>
+        <div style="margin-bottom:14px;">
+          <button class="btn btn-primary btn-sm" style="width:auto;" onclick="openModal('adminServiceCodeModal')">${ic('gift')} Создать сервисный код</button>
+        </div>
+        ${codes.length === 0 ? `<div class="empty-state">${ic('gift', 'ic-lg')}<div>Нет сервисных кодов</div></div>` : codes.map(c => `
+          <div class="list-item">
+            <div class="left">
+              <div class="title">${escapeHtml(c.code)} ${c.used ? '<span class="badge approved">Использован</span>' : '<span class="badge pending">Активен</span>'}</div>
+              <div class="meta">${formatNumber(c.amount)} ZR · ${escapeHtml(c.tx_type)} · ${new Date(c.created_at).toLocaleString('ru-RU')}${c.note ? ' · ' + escapeHtml(c.note) : ''}${c.used && c.redeemed_by_id ? ' · Активировал ID ' + c.redeemed_by_id : ''}</div>
+            </div>
+            <div class="amount">${formatNumber(c.amount)} ZR</div>
+          </div>`).join('')}
+      </div>`;
+  } catch (e) {
+    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
+  }
+}
+
 function renderAdminTools() {
   document.getElementById('adminContent').innerHTML = `
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
-      <div class="card">
+      <div class="card anim-up">
         <div class="section-title">${ic('wallet')} Изменить баланс</div>
         <p class="hint">Установить баланс пользователя вручную</p>
         <button class="btn btn-primary" onclick="openAdminBalance()">Открыть</button>
       </div>
-      <div class="card">
+      <div class="card anim-up">
         <div class="section-title">${ic('file')} Выставить счёт</div>
         <p class="hint">Создать счёт между пользователями</p>
         <button class="btn btn-primary" onclick="openAdminInvoice()">Открыть</button>
       </div>
+      <div class="card anim-up">
+        <div class="section-title">${ic('gift')} Сервисные коды</div>
+        <p class="hint">Создать бессрочный код для активации</p>
+        <button class="btn btn-primary" onclick="openModal('adminServiceCodeModal')">Создать</button>
+      </div>
     </div>`;
 }
 
+/* ─── Админ: действия ─── */
 async function openAdminBalance() {
   try {
     const users = await api('GET', '/api/admin/users');
@@ -1422,31 +1792,178 @@ async function adminCreateInvoice() {
     toast('Счёт выставлен', 'success');
     document.getElementById('aiAmount').value = '';
     document.getElementById('aiDescription').value = '';
+    loadAdminSub();
   } catch (e) {
     if (e.message === 'OFFLINE') return;
     err.innerHTML = alertBox('error', escapeHtml(e.message));
   }
 }
 
+async function adminCreateServiceCode() {
+  const amount = parseFloat(document.getElementById('scAmount').value);
+  const tx_type = document.getElementById('scTxType').value;
+  const note = document.getElementById('scNote').value.trim();
+  const err = document.getElementById('adminServiceCodeError');
+  if (!amount || amount <= 0) { err.innerHTML = alertBox('error', 'Введите корректную сумму'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Создаём...</span></div>';
+  try {
+    const data = await api('POST', '/api/admin/service-code', { amount, tx_type, note });
+    closeModal('adminServiceCodeModal');
+    document.getElementById('scAmount').value = '';
+    document.getElementById('scNote').value = '';
+    err.innerHTML = '';
+    toast('Сервисный код создан: ' + data.code, 'success');
+    loadAdminSub();
+  } catch (e) {
+    if (e.message === 'OFFLINE') return;
+    err.innerHTML = alertBox('error', escapeHtml(e.message));
+  }
+}
+
+function openAdminUserModal(id) {
+  const u = adminUsersCache.find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('auUserId').value = u.id;
+  document.getElementById('auName').value = u.name;
+  document.getElementById('auEmail').value = u.email;
+  document.getElementById('auType').value = u.user_type;
+  document.getElementById('auNyul').value = u.nyul || '';
+  document.getElementById('auBalance').value = u.balance;
+  document.getElementById('auPassword').value = '';
+  document.getElementById('auIsAdmin').checked = !!u.is_admin;
+  document.getElementById('auIsFrozen').checked = !!u.is_frozen;
+  document.getElementById('adminUserError').innerHTML = '';
+  openModal('adminUserModal');
+}
+
+async function adminSaveUser() {
+  const id = parseInt(document.getElementById('auUserId').value);
+  const err = document.getElementById('adminUserError');
+  const body = {};
+  const name = document.getElementById('auName').value.trim();
+  const email = document.getElementById('auEmail').value.trim();
+  const user_type = document.getElementById('auType').value;
+  const nyul = document.getElementById('auNyul').value.trim();
+  const balance = parseFloat(document.getElementById('auBalance').value);
+  const password = document.getElementById('auPassword').value;
+  const is_admin = document.getElementById('auIsAdmin').checked;
+  const is_frozen = document.getElementById('auIsFrozen').checked;
+  if (name) body.name = name;
+  if (email) body.email = email;
+  if (user_type) body.user_type = user_type;
+  body.nyul = nyul || null;
+  if (!isNaN(balance)) body.balance = balance;
+  if (password) body.password = password;
+  body.is_admin = is_admin;
+  body.is_frozen = is_frozen;
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Сохраняем...</span></div>';
+  try {
+    await api('PUT', `/api/admin/users/${id}`, body);
+    closeModal('adminUserModal');
+    toast('Пользователь обновлён', 'success');
+    loadAdminSub();
+    if (id === state.user.id) { await refreshMe(); render(); }
+  } catch (e) {
+    if (e.message === 'OFFLINE') return;
+    err.innerHTML = alertBox('error', escapeHtml(e.message));
+  }
+}
+
+async function adminDeleteUser(id) {
+  if (!confirm('Удалить пользователя? Все его счета и коды будут удалены, а история транзакций сохранена с обнулёнными ID.')) return;
+  try {
+    await api('DELETE', `/api/admin/users/${id}`);
+    toast('Пользователь удалён', 'success');
+    loadAdminSub();
+  } catch (e) {
+    if (e.message !== 'OFFLINE') toast(e.message, 'error');
+  }
+}
+
+function openAdminLoanModal(id) {
+  const l = adminLoansCache.find(x => x.id === id);
+  if (!l) return;
+  document.getElementById('adminLoanInfo').innerHTML = `
+    <div class="info-row"><span class="label">Заявитель</span><span class="value">${escapeHtml(l.user_name)}</span></div>
+    <div class="info-row"><span class="label">Сумма</span><span class="value">${formatNumber(l.amount)} ZR</span></div>
+    <div class="info-row"><span class="label">Ставка</span><span class="value">${l.rate}%</span></div>
+    <div class="info-row"><span class="label">Цель</span><span class="value">${escapeHtml(l.purpose)}</span></div>
+  `;
+  document.getElementById('loanFinalAmount').value = l.final_amount || '';
+  document.getElementById('loanFinalRate').value = l.final_rate || '';
+  document.getElementById('loanAdminComment').value = l.admin_comment || '';
+  document.getElementById('adminLoanError').innerHTML = '';
+  document.getElementById('adminLoanModal').dataset.loanId = l.id;
+  openModal('adminLoanModal');
+}
+
+async function adminReviewLoan(decision) {
+  const id = parseInt(document.getElementById('adminLoanModal').dataset.loanId);
+  const err = document.getElementById('adminLoanError');
+  const body = {};
+  const fa = document.getElementById('loanFinalAmount').value;
+  const fr = document.getElementById('loanFinalRate').value;
+  const comment = document.getElementById('loanAdminComment').value;
+  if (fa) body.final_amount = parseFloat(fa);
+  if (fr) body.final_rate = parseFloat(fr);
+  if (comment) body.admin_comment = comment;
+  if (decision) body.status = decision;
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Сохраняем...</span></div>';
+  try {
+    await api('PUT', `/api/admin/loans/${id}`, body);
+    closeModal('adminLoanModal');
+    toast(decision === 'approved' ? 'Кредит одобрен' : decision === 'rejected' ? 'Заявка отклонена' : 'Изменения сохранены', 'success');
+    loadAdminSub();
+  } catch (e) {
+    if (e.message === 'OFFLINE') return;
+    err.innerHTML = alertBox('error', escapeHtml(e.message));
+  }
+}
+
+function adminEditInvoice(id) {
+  const inv = adminInvoicesCache.find(x => x.id === id);
+  if (!inv) return;
+  const newAmount = prompt('Новая сумма (ZR):', inv.amount);
+  if (newAmount === null) return;
+  const newDesc = prompt('Новое описание:', inv.description || '');
+  if (newDesc === null) return;
+  const body = {};
+  if (parseFloat(newAmount) !== inv.amount) body.amount = parseFloat(newAmount);
+  if (newDesc !== (inv.description || '')) body.description = newDesc;
+  if (!Object.keys(body).length) return;
+  api('PUT', `/api/admin/invoices/${id}`, body)
+    .then(() => { toast('Счёт обновлён', 'success'); loadAdminSub(); })
+    .catch(e => { if (e.message !== 'OFFLINE') toast(e.message, 'error'); });
+}
+
+async function adminDeleteInvoice(id) {
+  if (!confirm('Удалить счёт?')) return;
+  try {
+    await api('DELETE', `/api/admin/invoices/${id}`);
+    toast('Счёт удалён', 'success');
+    loadAdminSub();
+  } catch (e) {
+    if (e.message !== 'OFFLINE') toast(e.message, 'error');
+  }
+}
+
 function editTransaction(id) {
-  const tx = txCache.find(t => t.id === id);
+  const tx = adminTxCache.find(t => t.id === id);
   if (!tx) return;
   const newAmount = prompt('Новая сумма (ZR):', tx.amount);
   if (newAmount === null) return;
-  const newType = prompt('Новый тип (Перевод/ЗП/Оплата/Покупка/Прочее):', tx.tx_type);
+  const newType = prompt('Новый тип (Перевод/ЗП/Оплата/Покупка/Прочее/Кредит):', tx.tx_type);
   if (newType === null) return;
   const newNote = prompt('Новая заметка:', tx.note || '');
   if (newNote === null) return;
   const newReceipt = prompt('Новый текст чека:', tx.receipt || '');
   if (newReceipt === null) return;
-
   const body = {};
   if (parseFloat(newAmount) !== tx.amount) body.amount = parseFloat(newAmount);
   if (newType !== tx.tx_type) body.tx_type = newType;
   if (newNote !== (tx.note || '')) body.note = newNote;
   if (newReceipt !== (tx.receipt || '')) body.receipt = newReceipt;
   if (Object.keys(body).length === 0) return;
-
   api('PUT', `/api/admin/transactions/${id}`, body)
     .then(() => { toast('Транзакция обновлена', 'success'); loadAdminSub(); })
     .catch(e => { if (e.message !== 'OFFLINE') toast(e.message, 'error'); });
@@ -1459,7 +1976,7 @@ function deleteTransaction(id) {
     .catch(e => { if (e.message !== 'OFFLINE') toast(e.message, 'error'); });
 }
 
-// ───────── Utils ─────────
+/* ─── Utils ─── */
 function formatNumber(n) {
   return new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
@@ -1471,7 +1988,8 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-// ───────── Init ─────────
+/* ─── Init ─── */
+initTheme();
 loadState();
 render();
 
@@ -1479,6 +1997,7 @@ document.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     if (e.target.id === 'loginEmail' || e.target.id === 'loginPassword') doLogin();
     if (e.target.id === 'redeemCode') redeemCode();
+    if (e.target.id === 'serviceRedeemCode') redeemServiceCode();
     if (e.target.id === 'byIdReceiver' || e.target.id === 'byIdAmount') transferById();
   }
 });
