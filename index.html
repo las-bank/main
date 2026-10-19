@@ -7,201 +7,75 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
   :root {
-    --bg: #000000;
-    --bg-2: #0c0c0c;
-    --card: #141414;
-    --card-hover: #1d1d1d;
-    --border: #2a2a2a;
-    --text: #f2f2f2;
-    --text-dim: #8f8f8f;
-    --invert: #000000;
-    --success: #4ade80;
-    --danger: #f87171;
-    --warning: #facc15;
-    --accent: #ffffff;
+    --bg: #000000; --bg-2: #0c0c0c; --card: #141414; --card-hover: #1d1d1d;
+    --border: #2a2a2a; --text: #f2f2f2; --text-dim: #8f8f8f; --invert: #000000;
+    --success: #4ade80; --danger: #f87171; --warning: #facc15; --accent: #ffffff;
     --shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-    --radius: 16px;
-    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --radius: 16px; --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
   [data-theme="light"] {
-    --bg: #f5f5f7;
-    --bg-2: #ffffff;
-    --card: #ffffff;
-    --card-hover: #f0f0f2;
-    --border: #e0e0e4;
-    --text: #1a1a1a;
-    --text-dim: #6b6b70;
-    --invert: #ffffff;
-    --accent: #000000;
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --bg: #f5f5f7; --bg-2: #ffffff; --card: #ffffff; --card-hover: #f0f0f2;
+    --border: #e0e0e4; --text: #1a1a1a; --text-dim: #6b6b70; --invert: #ffffff;
+    --accent: #000000; --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html, body {
     height: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
+    background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;
     transition: background var(--transition), color var(--transition);
   }
-
   [data-theme="dark"] body {
     background: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,0.05), transparent), #000;
   }
-
   #app { position: relative; z-index: 1; min-height: 100vh; }
   .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-
-  code {
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
-    color: var(--text);
-  }
-
-  .ic {
-    width: 18px; height: 18px;
-    flex-shrink: 0;
-    stroke: currentColor; fill: none;
-    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-    vertical-align: middle;
-  }
-  .ic-md { width: 22px; height: 22px; }
-  .ic-lg { width: 26px; height: 26px; }
+  code { background: var(--bg-2); border: 1px solid var(--border); padding: 2px 6px; border-radius: 6px; font-size: 12px; font-family: 'Courier New', monospace; color: var(--text); }
+  .ic { width: 18px; height: 18px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; }
+  .ic-md { width: 22px; height: 22px; } .ic-lg { width: 26px; height: 26px; }
   .ic-xl { width: 72px; height: 72px; stroke-width: 1.4; }
-
-  /* ─── Анимации ─── */
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-  }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
   @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
-  }
-
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
   .anim-up { animation: fadeInUp 0.35s var(--transition) both; }
   .anim-in { animation: fadeIn 0.3s ease both; }
   .anim-scale { animation: scaleIn 0.25s var(--transition) both; }
   .anim-shake { animation: shake 0.35s ease; }
-
-  /* Offline overlay */
-  #offline {
-    position: fixed; inset: 0;
-    background: rgba(0, 0, 0, 0.94);
-    backdrop-filter: blur(16px);
-    display: none;
-    align-items: center; justify-content: center;
-    z-index: 9999;
-    flex-direction: column; gap: 18px;
-    text-align: center; padding: 20px;
-  }
+  #offline { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.94); backdrop-filter: blur(16px); display: none; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 18px; text-align: center; padding: 20px; }
   #offline.show { display: flex; animation: fadeIn 0.3s ease; }
   #offline .off-icon { color: var(--danger); }
   #offline h2 { font-size: 26px; }
   #offline p { color: var(--text-dim); font-size: 15px; }
-  #offline button {
-    padding: 12px 28px;
-    background: #fff; border: none; border-radius: 12px;
-    color: #000; font-weight: 600; cursor: pointer; font-size: 15px;
-    transition: transform 0.2s;
-  }
+  #offline button { padding: 12px 28px; background: #fff; border: none; border-radius: 12px; color: #000; font-weight: 600; cursor: pointer; font-size: 15px; transition: transform 0.2s; }
   #offline button:hover { background: #ddd; transform: scale(1.03); }
-
-  /* Header */
-  .header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 0; border-bottom: 1px solid var(--border);
-    margin-bottom: 26px; flex-wrap: wrap; gap: 15px;
-  }
+  .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 26px; flex-wrap: wrap; gap: 15px; }
   .logo { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; }
-  .logo-mark {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: var(--accent); color: var(--invert);
-    display: flex; align-items: center; justify-content: center;
-    transition: background var(--transition), color var(--transition);
-  }
+  .logo-mark { width: 40px; height: 40px; border-radius: 10px; background: var(--accent); color: var(--invert); display: flex; align-items: center; justify-content: center; transition: background var(--transition), color var(--transition); }
   .user-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .user-info .name { font-weight: 500; }
-  .logout-btn {
-    padding: 8px 14px; background: transparent;
-    border: 1px solid var(--border); border-radius: 10px;
-    color: var(--text-dim); cursor: pointer; transition: all .2s;
-    font-size: 13px; display: inline-flex; align-items: center; gap: 7px;
-  }
+  .logout-btn { padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text-dim); cursor: pointer; transition: all .2s; font-size: 13px; display: inline-flex; align-items: center; gap: 7px; }
   .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
-
-  /* Theme toggle */
-  .theme-toggle {
-    width: 40px; height: 40px;
-    background: var(--bg-2); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--text-dim);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all .2s;
-    flex-shrink: 0;
-  }
+  .theme-toggle { width: 40px; height: 40px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; color: var(--text-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; flex-shrink: 0; }
   .theme-toggle:hover { color: var(--text); border-color: var(--accent); transform: rotate(15deg); }
-
-  /* Auth */
   .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .auth-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; padding: 38px; width: 100%; max-width: 440px;
-    box-shadow: var(--shadow);
-    animation: scaleIn 0.35s var(--transition) both;
-    transition: background var(--transition), border var(--transition);
-  }
+  .auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 38px; width: 100%; max-width: 440px; box-shadow: var(--shadow); animation: scaleIn 0.35s var(--transition) both; transition: background var(--transition), border var(--transition); }
   .auth-card h1 { font-size: 26px; margin-bottom: 6px; }
   .auth-card .subtitle { color: var(--text-dim); margin-bottom: 26px; font-size: 14px; }
   .auth-tabs { display: flex; gap: 4px; background: var(--bg-2); padding: 4px; border-radius: 12px; margin-bottom: 22px; border: 1px solid var(--border); }
-  .auth-tab {
-    flex: 1; padding: 10px; background: transparent; border: none; border-radius: 9px;
-    color: var(--text-dim); cursor: pointer; font-weight: 500; transition: all .2s; font-size: 14px;
-  }
+  .auth-tab { flex: 1; padding: 10px; background: transparent; border: none; border-radius: 9px; color: var(--text-dim); cursor: pointer; font-weight: 500; transition: all .2s; font-size: 14px; }
   .auth-tab.active { background: var(--accent); color: var(--invert); font-weight: 600; }
-
-  /* Forms */
   .form-group { margin-bottom: 16px; }
   .form-group label { display: block; margin-bottom: 6px; color: var(--text-dim); font-size: 13px; font-weight: 500; }
-  input, select, textarea {
-    width: 100%; padding: 12px 14px;
-    background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px;
-    color: var(--text); font-size: 15px; font-family: inherit; transition: border-color .2s, background var(--transition);
-  }
+  input, select, textarea { width: 100%; padding: 12px 14px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px; font-family: inherit; transition: border-color .2s, background var(--transition); }
   input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
   textarea { resize: vertical; min-height: 76px; }
-
   .checkbox-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-dim); margin-bottom: 18px; }
   .checkbox-row input[type="checkbox"] { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--accent); flex-shrink: 0; }
   .checkbox-row a { color: var(--text); }
-
-  .btn {
-    padding: 12px 22px; border: none; border-radius: 10px;
-    font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s;
-    font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    position: relative; overflow: hidden;
-  }
+  .btn { padding: 12px 22px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
   .btn:not(:disabled):active { transform: scale(0.98); }
   .btn-primary { background: var(--accent); color: var(--invert); width: 100%; }
@@ -216,227 +90,112 @@
   .btn-success:hover:not(:disabled) { background: rgba(74, 222, 128, 0.22); }
   .btn-sm { padding: 8px 13px; font-size: 13px; }
   .btn-icon { padding: 8px; }
-
-  /* Cards / grid */
   .grid { display: grid; gap: 18px; }
   .grid-cards { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-  .card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow);
-    transition: background var(--transition), border var(--transition);
-    animation: fadeInUp 0.35s var(--transition) both;
-  }
-
-  .balance-card {
-    background: linear-gradient(160deg, var(--card-hover) 0%, var(--card) 70%);
-    border: 1px solid var(--border); color: var(--text); position: relative; overflow: hidden;
-  }
-  [data-theme="dark"] .balance-card {
-    background: linear-gradient(160deg, #202020 0%, #0a0a0a 70%);
-    border-color: #333; color: #fff;
-  }
-  .balance-card::after {
-    content: ''; position: absolute; top: -60%; right: -20%;
-    width: 280px; height: 280px;
-    background: radial-gradient(circle, rgba(255,255,255,0.09) 0%, transparent 70%);
-    border-radius: 50%;
-    animation: pulse 4s ease-in-out infinite;
-  }
-  [data-theme="light"] .balance-card::after {
-    background: radial-gradient(circle, rgba(0,0,0,0.04) 0%, transparent 70%);
-  }
-  .balance-card .label {
-    opacity: .75; font-size: 12px; margin-bottom: 10px;
-    text-transform: uppercase; letter-spacing: 1.2px;
-    display: flex; align-items: center; gap: 8px; position: relative;
-  }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); transition: background var(--transition), border var(--transition); animation: fadeInUp 0.35s var(--transition) both; }
+  .balance-card { background: linear-gradient(160deg, var(--card-hover) 0%, var(--card) 70%); border: 1px solid var(--border); color: var(--text); position: relative; overflow: hidden; }
+  [data-theme="dark"] .balance-card { background: linear-gradient(160deg, #202020 0%, #0a0a0a 70%); border-color: #333; color: #fff; }
+  .balance-card::after { content: ''; position: absolute; top: -60%; right: -20%; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.09) 0%, transparent 70%); border-radius: 50%; animation: pulse 4s ease-in-out infinite; }
+  [data-theme="light"] .balance-card::after { background: radial-gradient(circle, rgba(0,0,0,0.04) 0%, transparent 70%); }
+  .balance-card .label { opacity: .75; font-size: 12px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.2px; display: flex; align-items: center; gap: 8px; position: relative; }
   .balance-card .amount { font-size: 38px; font-weight: 700; margin-bottom: 4px; position: relative; }
   .balance-card .amount small { font-size: 18px; opacity: .6; font-weight: 500; margin-left: 6px; }
   .balance-card .footer-info { font-size: 13px; opacity: .7; position: relative; }
-
   .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 18px; }
-  .quick-action {
-    padding: 18px 12px; background: var(--bg-2); border: 1px solid var(--border);
-    border-radius: 14px; cursor: pointer; transition: all .2s;
-    text-align: center; color: var(--text); font-family: inherit;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-  }
+  .quick-action { padding: 18px 12px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: all .2s; text-align: center; color: var(--text); font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .quick-action:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow); }
+  .quick-action:disabled { opacity: .4; cursor: not-allowed; transform: none; }
   .quick-action .qa-icon { color: var(--accent); }
   .quick-action .label { font-size: 13px; color: var(--text-dim); }
-
   .section-title { font-size: 17px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
   .section-title .ic { color: var(--text-dim); }
-
-  /* Tabs */
-  .tabs {
-    display: flex; gap: 4px; background: var(--card); padding: 4px;
-    border-radius: 12px; border: 1px solid var(--border);
-    margin-bottom: 20px; overflow-x: auto; flex-wrap: wrap;
-    transition: background var(--transition), border var(--transition);
-  }
-  .tab {
-    padding: 9px 15px; background: transparent; border: none; border-radius: 9px;
-    color: var(--text-dim); cursor: pointer; font-size: 14px; font-weight: 500;
-    transition: all .2s; white-space: nowrap; font-family: inherit;
-    display: inline-flex; align-items: center; gap: 8px;
-  }
+  .tabs { display: flex; gap: 4px; background: var(--card); padding: 4px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; overflow-x: auto; flex-wrap: wrap; transition: background var(--transition), border var(--transition); }
+  .tab { padding: 9px 15px; background: transparent; border: none; border-radius: 9px; color: var(--text-dim); cursor: pointer; font-size: 14px; font-weight: 500; transition: all .2s; white-space: nowrap; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; }
   .tab.active { background: var(--accent); color: var(--invert); font-weight: 600; }
   .tab:hover:not(.active) { color: var(--text); }
-
-  /* Lists */
-  .list-item {
-    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 14px 16px; margin-bottom: 10px;
-    display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
-    transition: all .2s;
-    animation: fadeInUp 0.3s var(--transition) both;
-  }
+  .list-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; transition: all .2s; animation: fadeInUp 0.3s var(--transition) both; }
   .list-item:hover { border-color: var(--accent); }
   .list-item .left { flex: 1; min-width: 180px; }
   .list-item .title { font-weight: 600; margin-bottom: 3px; }
   .list-item .meta { font-size: 13px; color: var(--text-dim); }
   .list-item .amount { font-size: 15px; font-weight: 600; white-space: nowrap; }
-  .amount.in { color: var(--success); }
-  .amount.out { color: var(--danger); }
+  .amount.in { color: var(--success); } .amount.out { color: var(--danger); }
   .row-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
   .check { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: var(--text-dim); }
   .check input { width: 17px; height: 17px; accent-color: var(--accent); cursor: pointer; }
-
-  .bulk-bar {
-    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-    padding: 12px 14px; background: var(--bg-2);
-    border: 1px solid var(--border); border-radius: 12px; margin-bottom: 14px;
-  }
+  .bulk-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 14px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 14px; }
   .bulk-info { margin-left: auto; color: var(--text-dim); font-size: 13px; }
   .bulk-info b { color: var(--text); }
-
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); }
   .empty-state .ic { margin-bottom: 12px; opacity: .5; }
   .empty-state div { display: block; }
-
-  /* Modal */
-  .modal {
-    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px); display: none;
-    align-items: center; justify-content: center; z-index: 100; padding: 20px;
-  }
+  .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
   .modal.show { display: flex; animation: fadeIn 0.2s ease; }
-  .modal-content {
-    background: var(--card); border: 1px solid var(--border); border-radius: 18px;
-    padding: 26px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
-    box-shadow: var(--shadow);
-    animation: scaleIn 0.25s var(--transition) both;
-    transition: background var(--transition), border var(--transition);
-  }
+  .modal-content { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow); animation: scaleIn 0.25s var(--transition) both; transition: background var(--transition), border var(--transition); }
+  .modal-content.wide { max-width: 640px; }
   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
   .modal-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
   .modal-close { background: transparent; border: none; color: var(--text-dim); cursor: pointer; padding: 6px; border-radius: 8px; display: flex; transition: all .2s; }
   .modal-close:hover { color: var(--text); background: var(--bg-2); transform: rotate(90deg); }
-
-  /* QR */
-  .qr-container {
-    display: flex; flex-direction: column; align-items: center; gap: 14px;
-    padding: 22px; background: #fff; border-radius: 14px; margin: 14px 0;
-  }
+  .qr-container { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 22px; background: #fff; border-radius: 14px; margin: 14px 0; }
   .qr-container #qrcode { display: flex; justify-content: center; }
-  .qr-container .code-text {
-    font-family: 'Courier New', monospace; font-size: 24px; font-weight: 700;
-    color: #111; letter-spacing: 4px; padding: 8px 16px;
-    background: #eee; border-radius: 8px; user-select: all;
-  }
+  .qr-container .code-text { font-family: 'Courier New', monospace; font-size: 24px; font-weight: 700; color: #111; letter-spacing: 4px; padding: 8px 16px; background: #eee; border-radius: 8px; user-select: all; }
   .qr-container .amount-display { font-size: 18px; color: #111; font-weight: 600; }
-
-  /* Alerts / toast */
-  .alert {
-    padding: 12px 14px; border-radius: 10px; margin-bottom: 14px;
-    font-size: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    animation: fadeInUp 0.25s var(--transition) both;
-  }
+  .alert { padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; animation: fadeInUp 0.25s var(--transition) both; }
   .alert.error { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid rgba(248,113,113,.3); }
   .alert.success { background: rgba(74, 222, 128, 0.1); color: var(--success); border: 1px solid rgba(74,222,128,.3); }
   .alert.info { background: rgba(255, 255, 255, 0.06); color: var(--text); border: 1px solid var(--border); }
-
-  #toast {
-    position: fixed; bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--card); border: 1px solid var(--border);
-    padding: 12px 20px; border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,.5);
-    z-index: 200; transition: transform .35s cubic-bezier(0.4, 0, 0.2, 1); font-size: 14px; max-width: 90%;
-    display: flex; align-items: center; gap: 10px;
-  }
+  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card); border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,.5); z-index: 200; transition: transform .35s cubic-bezier(0.4, 0, 0.2, 1); font-size: 14px; max-width: 90%; display: flex; align-items: center; gap: 10px; }
   #toast.show { transform: translateX(-50%) translateY(0); }
   #toast.error { border-color: var(--danger); color: var(--danger); }
   #toast.success { border-color: var(--success); color: var(--success); }
-
-  .receipt {
-    background: var(--bg-2); border: 1px dashed var(--border); border-radius: 10px;
-    padding: 14px; font-family: 'Courier New', monospace; font-size: 13px;
-    white-space: pre-wrap; line-height: 1.5; margin-top: 12px; color: var(--text);
-  }
-
-  .admin-badge {
-    display: inline-block; padding: 3px 9px; background: var(--accent); color: var(--invert);
-    border-radius: 20px; font-size: 10px; font-weight: 700;
-    text-transform: uppercase; margin-left: 8px; letter-spacing: .5px;
-  }
-
-  .badge {
-    display: inline-block; padding: 3px 9px; border-radius: 20px;
-    font-size: 11px; font-weight: 600; letter-spacing: .3px;
-  }
+  .receipt { background: var(--bg-2); border: 1px dashed var(--border); border-radius: 10px; padding: 14px; font-family: 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.5; margin-top: 12px; color: var(--text); }
+  .admin-badge { display: inline-block; padding: 3px 9px; background: var(--accent); color: var(--invert); border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 8px; letter-spacing: .5px; }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: .3px; }
   .badge.pending { background: rgba(250,204,21,.15); color: var(--warning); border: 1px solid rgba(250,204,21,.3); }
   .badge.approved { background: rgba(74,222,128,.15); color: var(--success); border: 1px solid rgba(74,222,128,.3); }
   .badge.rejected { background: rgba(248,113,113,.15); color: var(--danger); border: 1px solid rgba(248,113,113,.3); }
   .badge.service { background: rgba(168,85,247,.15); color: #a855f7; border: 1px solid rgba(168,85,247,.3); }
   .badge.frozen { background: rgba(96,165,250,.15); color: #60a5fa; border: 1px solid rgba(96,165,250,.3); }
-
+  .badge.active { background: rgba(96,165,250,.15); color: #60a5fa; border: 1px solid rgba(96,165,250,.3); }
+  .badge.repaid { background: rgba(74,222,128,.15); color: var(--success); border: 1px solid rgba(74,222,128,.3); }
+  .badge.invoiced { background: rgba(250,204,21,.15); color: var(--warning); border: 1px solid rgba(250,204,21,.3); }
+  .badge.forgiven { background: rgba(168,85,247,.15); color: #a855f7; border: 1px solid rgba(168,85,247,.3); }
   .hidden { display: none !important; }
-
   .toggle-group { display: flex; gap: 8px; margin-bottom: 16px; }
-  .toggle-btn {
-    flex: 1; padding: 10px; background: var(--bg-2); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--text-dim); cursor: pointer; font-size: 14px;
-    font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all .2s;
-  }
+  .toggle-btn { flex: 1; padding: 10px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; color: var(--text-dim); cursor: pointer; font-size: 14px; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all .2s; }
   .toggle-btn.active { background: var(--accent); color: var(--invert); border-color: var(--accent); font-weight: 600; }
-
   .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; gap: 10px; }
   .info-row:last-child { border-bottom: none; }
   .info-row .label { color: var(--text-dim); }
   .info-row .value { font-weight: 500; text-align: right; }
-
   .btn-row { display: flex; gap: 10px; margin-top: 16px; }
   .btn-row .btn { flex: 1; }
-
   .hint { color: var(--text-dim); font-size: 13px; margin-bottom: 14px; line-height: 1.5; }
-
-  .spinner {
-    display: inline-block; width: 15px; height: 15px;
-    border: 2px solid transparent; border-top-color: currentColor;
-    border-radius: 50%; animation: spin .6s linear infinite;
-  }
-
-  .service-code-card {
-    background: linear-gradient(135deg, rgba(168,85,247,.08), rgba(168,85,247,.02));
-    border: 1px solid rgba(168,85,247,.25);
-  }
-
+  .spinner { display: inline-block; width: 15px; height: 15px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin .6s linear infinite; }
+  .service-code-card { background: linear-gradient(135deg, rgba(168,85,247,.08), rgba(168,85,247,.02)); border: 1px solid rgba(168,85,247,.25); }
+  /* ─── LCoin ─── */
+  .market-header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+  .market-price { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; }
+  .market-price small { font-size: 15px; font-weight: 500; color: var(--text-dim); margin-left: 4px; }
+  .price-up { color: var(--success); } .price-down { color: var(--danger); } .price-flat { color: var(--text-dim); }
+  .market-change { font-size: 15px; font-weight: 600; }
+  .chart-svg { width: 100%; height: 130px; display: block; }
+  .chart-svg polyline { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .portfolio-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .portfolio-row:last-child { border-bottom: none; }
+  .portfolio-row .sym { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .coin-icon { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #facc15, #f59e0b); align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #000; }
+  .zl-icon { background: linear-gradient(135deg, #94a3b8, #64748b); }
   @media (max-width: 600px) {
-    .auth-card { padding: 26px 18px; }
-    .card { padding: 16px; }
-    .balance-card .amount { font-size: 30px; }
-    .user-info .name { font-size: 14px; }
-    .quick-actions { grid-template-columns: repeat(2, 1fr); }
+    .auth-card { padding: 26px 18px; } .card { padding: 16px; }
+    .balance-card .amount { font-size: 30px; } .user-info .name { font-size: 14px; }
+    .quick-actions { grid-template-columns: repeat(2, 1fr); } .market-price { font-size: 26px; }
   }
 </style>
 </head>
 <body data-theme="dark">
 
-<!-- ══════════ SVG sprite ══════════ -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="i-landmark" viewBox="0 0 24 24"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
@@ -473,7 +232,11 @@
   <symbol id="i-trending-up" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></symbol>
-  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+  <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="M16.71 13.88l.7.71-2.82 2.82"/></symbol>
+  <symbol id="i-trending-down" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
 </svg>
 
 <div id="offline">
@@ -486,353 +249,269 @@
 <div id="toast"></div>
 <div id="app"></div>
 
-<!-- ─── Модальные окна ─── -->
+<!-- ═══ Модальные окна ═══ -->
 
-<!-- Код на получение -->
-<div class="modal" id="codeModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-qr"/></svg> Код на получение</div>
-      <button class="modal-close" onclick="closeModal('codeModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="codeModalBody"></div>
-  </div>
-</div>
+<div class="modal" id="codeModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-qr"/></svg> Код на получение</div>
+  <button class="modal-close" onclick="closeModal('codeModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="codeModalBody"></div>
+</div></div>
 
-<!-- Оплатить по коду -->
-<div class="modal" id="redeemModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-scan"/></svg> Оплатить по коду</div>
-      <button class="modal-close" onclick="closeModal('redeemModal')"><svg class="ic"><use href="#i-x"/></svg></button>
+<div class="modal" id="redeemModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-scan"/></svg> Оплатить по коду</div>
+  <button class="modal-close" onclick="closeModal('redeemModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="redeemModalBody">
+    <p class="hint">Введите код получателя или отсканируйте его QR. Сумма спишется с вашего баланса и уйдёт создателю кода. Комиссия удерживается с вас сверх суммы, налог — у получателя.</p>
+    <div id="redeemFeePreview" style="font-size:12px;color:var(--text-dim);margin-bottom:10px;"></div>
+    <div class="form-group">
+      <label>Код перевода (8 символов)</label>
+      <input type="text" id="redeemCode" placeholder="K4M9XB2R" maxlength="8" style="text-transform:uppercase;letter-spacing:3px;font-family:monospace;text-align:center;font-size:20px;">
     </div>
-    <div id="redeemModalBody">
-      <p class="hint">Введите код получателя или отсканируйте его QR. Сумма спишется с вашего баланса и уйдёт создателю кода.</p>
-      <div class="toggle-group">
-        <button class="toggle-btn active" onclick="toggleRedeemMode('scan')"><svg class="ic"><use href="#i-camera"/></svg> Сканировать QR</button>
-        <button class="toggle-btn" onclick="toggleRedeemMode('manual')"><svg class="ic"><use href="#i-keyboard"/></svg> Ввести код</button>
-      </div>
-      <div id="redeemScanView">
-        <div class="qr-container" style="padding:36px;">
-          <svg class="ic ic-lg" style="color:#111;"><use href="#i-camera"/></svg>
-          <p style="color:#111;text-align:center;font-size:14px;">Отсканируйте QR получателя системным сканером<br><small>и вставьте код во вкладке «Ввести код»</small></p>
-        </div>
-      </div>
-      <div id="redeemManualView" class="hidden">
-        <div class="form-group">
-          <label>Код перевода (8 символов)</label>
-          <input type="text" id="redeemCode" placeholder="K4M9XB2R" maxlength="8" style="text-transform:uppercase;letter-spacing:3px;font-family:monospace;text-align:center;font-size:20px;">
-        </div>
-      </div>
-      <div id="redeemError"></div>
-      <button class="btn btn-primary" onclick="redeemCode()"><svg class="ic"><use href="#i-send"/></svg> Оплатить</button>
-    </div>
+    <div id="redeemError"></div>
+    <button class="btn btn-primary" onclick="redeemCode()"><svg class="ic"><use href="#i-send"/></svg> Оплатить</button>
   </div>
-</div>
+</div></div>
 
-<!-- Создать код на получение -->
-<div class="modal" id="generateModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-qr"/></svg> Получить деньги</div>
-      <button class="modal-close" onclick="closeModal('generateModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <p class="hint">Создастся одноразовый код с QR. Покажите его плательщику — он отсканирует код или введёт его вручную, и сумма поступит на ваш баланс.</p>
-    <div id="generateError"></div>
-    <div class="form-group">
-      <label>Сумма (ZR)</label>
-      <input type="number" id="genAmount" step="0.01" min="0.01" placeholder="250.50">
-    </div>
-    <div class="form-group">
-      <label>Тип перевода</label>
-      <select id="genType">
-        <option value="Перевод">Перевод</option>
-        <option value="ЗП">Зарплата</option>
-        <option value="Оплата">Оплата</option>
-        <option value="Покупка">Покупка</option>
-        <option value="Прочее">Прочее</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Заметка (необязательно)</label>
-      <textarea id="genNote" placeholder="Например: за обед"></textarea>
-    </div>
-    <button class="btn btn-primary" onclick="generateCode()"><svg class="ic"><use href="#i-qr"/></svg> Создать код</button>
-  </div>
-</div>
+<div class="modal" id="generateModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-qr"/></svg> Получить деньги</div>
+  <button class="modal-close" onclick="closeModal('generateModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Создастся одноразовый код с QR. Покажите его плательщику — он отсканирует код или введёт его вручную, и сумма поступит на ваш баланс.</p>
+  <div id="generateError"></div>
+  <div class="form-group"><label>Сумма (ZTL)</label><input type="number" id="genAmount" step="0.01" min="0.01" placeholder="250.50"></div>
+  <div class="form-group"><label>Тип перевода</label><select id="genType">
+    <option value="Перевод">Перевод</option><option value="ЗП">Зарплата</option>
+    <option value="Оплата">Оплата</option><option value="Покупка">Покупка</option><option value="Прочее">Прочее</option>
+  </select></div>
+  <div class="form-group"><label>Заметка (необязательно)</label><textarea id="genNote" placeholder="Например: за обед"></textarea></div>
+  <button class="btn btn-primary" onclick="generateCode()"><svg class="ic"><use href="#i-qr"/></svg> Создать код</button>
+</div></div>
 
-<!-- Перевод по ID -->
-<div class="modal" id="byIdModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-send"/></svg> Перевод по ID</div>
-      <button class="modal-close" onclick="closeModal('byIdModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <p class="hint">Прямой перевод другому пользователю LasBank по его ID. Сумма списывается с вашего баланса и зачисляется получателю.</p>
-    <div id="byIdError"></div>
-    <div class="form-group">
-      <label>ID получателя</label>
-      <input type="number" id="byIdReceiver" min="1" step="1" placeholder="42">
-    </div>
-    <div class="form-group">
-      <label>Сумма (ZR)</label>
-      <input type="number" id="byIdAmount" step="0.01" min="0.01" placeholder="100.00">
-    </div>
-    <div class="form-group">
-      <label>Тип перевода</label>
-      <select id="byIdType">
-        <option value="Перевод">Перевод</option>
-        <option value="ЗП">Зарплата</option>
-        <option value="Оплата">Оплата</option>
-        <option value="Покупка">Покупка</option>
-        <option value="Прочее">Прочее</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Заметка (необязательно)</label>
-      <textarea id="byIdNote" placeholder="Например: за обед"></textarea>
-    </div>
-    <button class="btn btn-primary" onclick="transferById()"><svg class="ic"><use href="#i-send"/></svg> Отправить</button>
-  </div>
-</div>
+<div class="modal" id="byIdModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-send"/></svg> Перевод по ID</div>
+  <button class="modal-close" onclick="closeModal('byIdModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Прямой перевод другому пользователю LasBank по его ID. Сумма списывается с вашего баланса и зачисляется получателю.</p>
+  <div id="byIdFeePreview" style="font-size:12px;color:var(--text-dim);margin-bottom:10px;"></div>
+  <div id="byIdError"></div>
+  <div class="form-group"><label>ID получателя</label><input type="number" id="byIdReceiver" min="1" step="1" placeholder="42"></div>
+  <div class="form-group"><label>Сумма (ZTL)</label><input type="number" id="byIdAmount" step="0.01" min="0.01" placeholder="100.00"></div>
+  <div class="form-group"><label>Тип перевода</label><select id="byIdType">
+    <option value="Перевод">Перевод</option><option value="ЗП">Зарплата</option>
+    <option value="Оплата">Оплата</option><option value="Покупка">Покупка</option><option value="Прочее">Прочее</option>
+  </select></div>
+  <div class="form-group"><label>Заметка (необязательно)</label><textarea id="byIdNote" placeholder="Например: за обед"></textarea></div>
+  <button class="btn btn-primary" onclick="transferById()"><svg class="ic"><use href="#i-send"/></svg> Отправить</button>
+</div></div>
 
-<!-- Детали счёта -->
-<div class="modal" id="invoiceModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-file"/></svg> Детали счёта</div>
-      <button class="modal-close" onclick="closeModal('invoiceModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="invoiceModalBody"></div>
-  </div>
-</div>
+<div class="modal" id="invoiceModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-file"/></svg> Детали счёта</div>
+  <button class="modal-close" onclick="closeModal('invoiceModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="invoiceModalBody"></div>
+</div></div>
 
-<!-- Чек -->
-<div class="modal" id="receiptModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-receipt"/></svg> Чек</div>
-      <button class="modal-close" onclick="closeModal('receiptModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="receiptModalBody"></div>
-  </div>
-</div>
+<div class="modal" id="receiptModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-receipt"/></svg> Чек</div>
+  <button class="modal-close" onclick="closeModal('receiptModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="receiptModalBody"></div>
+</div></div>
 
-<!-- Админ: баланс -->
-<div class="modal" id="adminBalanceModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-wallet"/></svg> Изменить баланс</div>
-      <button class="modal-close" onclick="closeModal('adminBalanceModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="adminBalanceError"></div>
-    <div class="form-group">
-      <label>Пользователь</label>
-      <select id="abUserId"></select>
-    </div>
-    <div class="form-group">
-      <label>Новый баланс (ZR)</label>
-      <input type="number" id="abBalance" step="0.01" placeholder="5000.00">
-    </div>
-    <button class="btn btn-primary" onclick="adminSetBalance()"><svg class="ic"><use href="#i-check"/></svg> Сохранить</button>
-  </div>
-</div>
+<div class="modal" id="adminBalanceModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-wallet"/></svg> Изменить баланс</div>
+  <button class="modal-close" onclick="closeModal('adminBalanceModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="adminBalanceError"></div>
+  <div class="form-group"><label>Пользователь</label><select id="abUserId"></select></div>
+  <div class="form-group"><label>Новый баланс (ZTL)</label><input type="number" id="abBalance" step="0.01" placeholder="5000.00"></div>
+  <button class="btn btn-primary" onclick="adminSetBalance()"><svg class="ic"><use href="#i-check"/></svg> Сохранить</button>
+</div></div>
 
-<!-- Админ: счёт -->
-<div class="modal" id="adminInvoiceModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-file"/></svg> Выставить счёт</div>
-      <button class="modal-close" onclick="closeModal('adminInvoiceModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="adminInvoiceError"></div>
-    <div class="form-group">
-      <label>От кого (плательщик)</label>
-      <select id="aiFromId"></select>
-    </div>
-    <div class="form-group">
-      <label>Кому (получатель)</label>
-      <select id="aiToId"></select>
-    </div>
-    <div class="form-group">
-      <label>Сумма (ZR)</label>
-      <input type="number" id="aiAmount" step="0.01" placeholder="1000.00">
-    </div>
-    <div class="form-group">
-      <label>Описание</label>
-      <textarea id="aiDescription" placeholder="Штраф за просрочку..."></textarea>
-    </div>
-    <button class="btn btn-primary" onclick="adminCreateInvoice()"><svg class="ic"><use href="#i-send"/></svg> Выставить счёт</button>
-  </div>
-</div>
+<div class="modal" id="adminInvoiceModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-file"/></svg> Выставить счёт</div>
+  <button class="modal-close" onclick="closeModal('adminInvoiceModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="adminInvoiceError"></div>
+  <div class="form-group"><label>От кого (плательщик)</label><select id="aiFromId"></select></div>
+  <div class="form-group"><label>Кому (получатель)</label><select id="aiToId"></select></div>
+  <div class="form-group"><label>Сумма (ZTL)</label><input type="number" id="aiAmount" step="0.01" placeholder="1000.00"></div>
+  <div class="form-group"><label>Описание</label><textarea id="aiDescription" placeholder="Штраф за просрочку..."></textarea></div>
+  <div class="form-group"><label>Срок оплаты (сек., необязательно)</label><input type="number" id="aiDueSeconds" min="1" placeholder="например, 3600 (1 час). После срока сумма удваивается каждые 30 сек."></div>
+  <button class="btn btn-primary" onclick="adminCreateInvoice()"><svg class="ic"><use href="#i-send"/></svg> Выставить счёт</button>
+</div></div>
 
-<!-- Админ: сервисный код -->
-<div class="modal" id="adminServiceCodeModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-gift"/></svg> Создать сервисный код</div>
-      <button class="modal-close" onclick="closeModal('adminServiceCodeModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <p class="hint">Сервисный код — бессрочный код, который может активировать любой пользователь. Получатель определяется при активации.</p>
-    <div id="adminServiceCodeError"></div>
-    <div class="form-group">
-      <label>Сумма (ZR)</label>
-      <input type="number" id="scAmount" step="0.01" min="0.01" placeholder="1000.00">
-    </div>
-    <div class="form-group">
-      <label>Тип транзакции</label>
-      <select id="scTxType">
-        <option value="Прочее">Прочее</option>
-        <option value="Перевод">Перевод</option>
-        <option value="ЗП">Зарплата</option>
-        <option value="Оплата">Оплата</option>
-        <option value="Покупка">Покупка</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Заметка (необязательно)</label>
-      <textarea id="scNote" placeholder="приветственный бонус"></textarea>
-    </div>
-    <button class="btn btn-primary" onclick="adminCreateServiceCode()"><svg class="ic"><use href="#i-gift"/></svg> Создать код</button>
-  </div>
-</div>
+<div class="modal" id="adminServiceCodeModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-gift"/></svg> Создать сервисный код</div>
+  <button class="modal-close" onclick="closeModal('adminServiceCodeModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Сервисный код — бессрочный код, который может активировать любой пользователь. Получатель определяется при активации. Деньги идут со счёта LasBank (ID 1).</p>
+  <div id="adminServiceCodeError"></div>
+  <div class="form-group"><label>Сумма (ZTL)</label><input type="number" id="scAmount" step="0.01" min="0.01" placeholder="1000.00"></div>
+  <div class="form-group"><label>Тип транзакции</label><select id="scTxType">
+    <option value="Прочее">Прочее</option><option value="Перевод">Перевод</option>
+    <option value="ЗП">Зарплата</option><option value="Оплата">Оплата</option><option value="Покупка">Покупка</option>
+  </select></div>
+  <div class="form-group"><label>Заметка (необязательно)</label><textarea id="scNote" placeholder="приветственный бонус"></textarea></div>
+  <button class="btn btn-primary" onclick="adminCreateServiceCode()"><svg class="ic"><use href="#i-gift"/></svg> Создать код</button>
+</div></div>
 
-<!-- Активация сервисного кода -->
-<div class="modal" id="serviceRedeemModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-gift"/></svg> Активировать сервисный код</div>
-      <button class="modal-close" onclick="closeModal('serviceRedeemModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <p class="hint">Введите сервисный код, чтобы получить средства на баланс.</p>
-    <div id="serviceRedeemError"></div>
-    <div class="form-group">
-      <label>Сервисный код (8 символов)</label>
-      <input type="text" id="serviceRedeemCode" placeholder="K3M9XQ2P" maxlength="8" style="text-transform:uppercase;letter-spacing:3px;font-family:monospace;text-align:center;font-size:20px;">
-    </div>
-    <button class="btn btn-primary" onclick="redeemServiceCode()"><svg class="ic"><use href="#i-gift"/></svg> Активировать</button>
-  </div>
-</div>
+<div class="modal" id="serviceRedeemModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-gift"/></svg> Активировать сервисный код</div>
+  <button class="modal-close" onclick="closeModal('serviceRedeemModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Введите сервисный код, чтобы получить средства на баланс. Сумма идёт со счёта LasBank, у вас удерживается подоходный налог.</p>
+  <div id="serviceRedeemError"></div>
+  <div class="form-group"><label>Сервисный код (8 символов)</label>
+    <input type="text" id="serviceRedeemCode" placeholder="K3M9XQ2P" maxlength="8" style="text-transform:uppercase;letter-spacing:3px;font-family:monospace;text-align:center;font-size:20px;"></div>
+  <button class="btn btn-primary" onclick="redeemServiceCode()"><svg class="ic"><use href="#i-gift"/></svg> Активировать</button>
+</div></div>
 
-<!-- Админ: кредиты — редактирование заявки -->
-<div class="modal" id="adminLoanModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-credit-card"/></svg> Рассмотрение заявки</div>
-      <button class="modal-close" onclick="closeModal('adminLoanModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="adminLoanError"></div>
-    <div id="adminLoanInfo" style="margin-bottom:16px;"></div>
-    <div class="form-group">
-      <label>Скорректированная сумма (ZR) — оставьте пустым, чтобы не менять</label>
-      <input type="number" id="loanFinalAmount" step="0.01" placeholder="4000.00">
-    </div>
-    <div class="form-group">
-      <label>Скорректированная ставка (%)</label>
-      <input type="number" id="loanFinalRate" step="0.1" placeholder="10.0">
-    </div>
-    <div class="form-group">
-      <label>Комментарий администратора</label>
-      <textarea id="loanAdminComment" placeholder="уменьшили сумму, ставку снизили до 10%"></textarea>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-success" onclick="adminReviewLoan('approved')"><svg class="ic"><use href="#i-check"/></svg> Одобрить</button>
-      <button class="btn btn-danger" onclick="adminReviewLoan('rejected')"><svg class="ic"><use href="#i-x"/></svg> Отклонить</button>
-    </div>
-    <div style="margin-top:10px;">
-      <button class="btn btn-ghost" style="width:100%;" onclick="adminReviewLoan(null)">Сохранить без решения</button>
-    </div>
+<!-- Админ: кредит -->
+<div class="modal" id="adminLoanModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-credit-card"/></svg> Рассмотрение заявки</div>
+  <button class="modal-close" onclick="closeModal('adminLoanModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="adminLoanError"></div>
+  <div id="adminLoanInfo" style="margin-bottom:16px;"></div>
+  <div class="form-group"><label>Скорректированная сумма (ZTL)</label><input type="number" id="loanFinalAmount" step="0.01" placeholder="4000.00"></div>
+  <div class="form-group"><label>Ставка (% в день)</label><input type="number" id="loanFinalRate" step="0.1" min="0.1" max="100" placeholder="5.0"></div>
+  <div class="form-group"><label>Срок (дней, 1–30)</label><input type="number" id="loanFinalTermDays" min="1" max="30" step="1" placeholder="14"></div>
+  <div class="form-group"><label>Комментарий администратора</label><textarea id="loanAdminComment" placeholder="уменьшили сумму, ставку снизили до 5%"></textarea></div>
+  <div class="btn-row">
+    <button class="btn btn-success" onclick="adminReviewLoan('approved')"><svg class="ic"><use href="#i-check"/></svg> Одобрить</button>
+    <button class="btn btn-danger" onclick="adminReviewLoan('rejected')"><svg class="ic"><use href="#i-x"/></svg> Отклонить</button>
   </div>
-</div>
+  <div style="margin-top:10px;"><button class="btn btn-ghost" style="width:100%;" onclick="adminReviewLoan(null)">Сохранить без решения</button></div>
+  <div id="adminLoanActions" style="margin-top:14px;"></div>
+</div></div>
 
-<!-- Админ: редактирование пользователя -->
-<div class="modal" id="adminUserModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <div class="modal-title"><svg class="ic"><use href="#i-users"/></svg> Редактировать пользователя</div>
-      <button class="modal-close" onclick="closeModal('adminUserModal')"><svg class="ic"><use href="#i-x"/></svg></button>
-    </div>
-    <div id="adminUserError"></div>
-    <input type="hidden" id="auUserId">
-    <div class="form-group"><label>Имя</label><input type="text" id="auName"></div>
-    <div class="form-group"><label>E-mail</label><input type="email" id="auEmail"></div>
-    <div class="form-group"><label>Тип</label>
-      <select id="auType"><option value="individual">Физ. лицо</option><option value="legal">Юр. лицо</option></select>
-    </div>
-    <div class="form-group"><label>NYUL</label><input type="text" id="auNyul"></div>
-    <div class="form-group"><label>Баланс (ZR)</label><input type="number" id="auBalance" step="0.01"></div>
-    <div class="form-group"><label>Новый пароль (мин. 6 символов, опционально)</label><input type="password" id="auPassword" placeholder="оставьте пустым, чтобы не менять"></div>
-    <div class="checkbox-row"><input type="checkbox" id="auIsAdmin"><label for="auIsAdmin">Администратор</label></div>
-    <div class="checkbox-row"><input type="checkbox" id="auIsFrozen"><label for="auIsFrozen">Заморожен</label></div>
-    <button class="btn btn-primary" onclick="adminSaveUser()"><svg class="ic"><use href="#i-check"/></svg> Сохранить</button>
-  </div>
-</div>
+<!-- Админ: пользователь -->
+<div class="modal" id="adminUserModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-users"/></svg> Редактировать пользователя</div>
+  <button class="modal-close" onclick="closeModal('adminUserModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="adminUserError"></div>
+  <input type="hidden" id="auUserId">
+  <div class="form-group"><label>Имя</label><input type="text" id="auName"></div>
+  <div class="form-group"><label>E-mail</label><input type="email" id="auEmail"></div>
+  <div class="form-group"><label>Тип</label><select id="auType"><option value="individual">Физ. лицо</option><option value="legal">Юр. лицо</option></select></div>
+  <div class="form-group"><label>NYUL</label><input type="text" id="auNyul"></div>
+  <div class="form-group"><label>Баланс (ZTL)</label><input type="number" id="auBalance" step="0.01"></div>
+  <div class="form-group"><label>Новый пароль (мин. 6 символов, опционально)</label><input type="password" id="auPassword" placeholder="оставьте пустым, чтобы не менять"></div>
+  <div class="checkbox-row"><input type="checkbox" id="auIsAdmin"><label for="auIsAdmin">Администратор</label></div>
+  <div class="checkbox-row"><input type="checkbox" id="auIsFrozen"><label for="auIsFrozen">Заморожен</label></div>
+  <button class="btn btn-primary" onclick="adminSaveUser()"><svg class="ic"><use href="#i-check"/></svg> Сохранить</button>
+</div></div>
+
+<!-- Админ: настройки -->
+<div class="modal" id="adminSettingsModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-settings"/></svg> Настройки системы</div>
+  <button class="modal-close" onclick="closeModal('adminSettingsModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="adminSettingsError"></div>
+  <div class="form-group"><label>Комиссия при переводе / оплате по QR, % (платит отправитель)</label><input type="number" id="setCommission" step="0.1" min="0" max="99.9"></div>
+  <div class="form-group"><label>Подоходный налог с QR/сервисных кодов, % (удерживается у получателя)</label><input type="number" id="setTax" step="0.1" min="0" max="99.9"></div>
+  <div class="form-group"><label>Глубина рынка LCoin (coin_liquidity)</label><input type="number" id="setLiquidity" step="1" min="1"></div>
+  <button class="btn btn-primary" onclick="adminSaveSettings()"><svg class="ic"><use href="#i-check"/></svg> Сохранить</button>
+</div></div>
+
+<!-- Админ: цена LCoin -->
+<div class="modal" id="adminMarketPriceModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-coins"/></svg> Установить цену LCoin</div>
+  <button class="modal-close" onclick="closeModal('adminMarketPriceModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Администратор может вручную установить цену. Это создаст новую точку на графике.</p>
+  <div id="adminMarketPriceError"></div>
+  <div class="form-group"><label>Новая цена (ZTL за 1 LCoin)</label><input type="number" id="ampPrice" step="0.0001" min="0.0001"></div>
+  <button class="btn btn-primary" onclick="adminSetCoinPrice()"><svg class="ic"><use href="#i-check"/></svg> Установить</button>
+</div></div>
+
+<!-- Админ: прямой кредит -->
+<div class="modal" id="adminDirectLoanModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-credit-card"/></svg> Выдать кредит напрямую</div>
+  <button class="modal-close" onclick="closeModal('adminDirectLoanModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Кредит выдаётся сразу со счёта LasBank (ID 1). Заявка создаётся уже одобренной.</p>
+  <div id="adminDirectLoanError"></div>
+  <div class="form-group"><label>Пользователь</label><select id="adlUserId"></select></div>
+  <div class="form-group"><label>Сумма (ZTL)</label><input type="number" id="adlAmount" step="0.01" min="0.01"></div>
+  <div class="form-group"><label>Ставка (% в день)</label><input type="number" id="adlRate" step="0.1" min="0.1" max="100"></div>
+  <div class="form-group"><label>Срок (дней, 1–30)</label><input type="number" id="adlTermDays" min="1" max="30" step="1" value="14"></div>
+  <div class="form-group"><label>Цель</label><textarea id="adlPurpose" placeholder="выдан администратором"></textarea></div>
+  <div class="form-group"><label>Комментарий</label><textarea id="adlComment"></textarea></div>
+  <button class="btn btn-primary" onclick="adminDirectLoan()"><svg class="ic"><use href="#i-check"/></svg> Выдать</button>
+</div></div>
+
+<!-- LCoin: купить -->
+<div class="modal" id="exchangeBuyModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-plus"/></svg> Купить LCoin</div>
+  <button class="modal-close" onclick="closeModal('exchangeBuyModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="exchangeBuyError"></div>
+  <div class="form-group"><label>Сколько LCoin купить (кратно 0.02)</label><input type="number" id="buyAmount" step="0.02" min="0.02" placeholder="1.00"></div>
+  <button class="btn btn-primary" onclick="exchangeBuy()"><svg class="ic"><use href="#i-trending-up"/></svg> Купить</button>
+</div></div>
+
+<!-- LCoin: продать -->
+<div class="modal" id="exchangeSellModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-minus"/></svg> Продать LCoin</div>
+  <button class="modal-close" onclick="closeModal('exchangeSellModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <div id="exchangeSellError"></div>
+  <div class="form-group"><label>Сколько LCoin продать (кратно 0.02)</label><input type="number" id="sellAmount" step="0.02" min="0.02" placeholder="1.00"></div>
+  <button class="btn btn-primary" onclick="exchangeSell()"><svg class="ic"><use href="#i-trending-down"/></svg> Продать</button>
+</div></div>
+
+<!-- LCoin: вывод -->
+<div class="modal" id="exchangeWithdrawModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-receive"/></svg> Вывести LCoin</div>
+  <button class="modal-close" onclick="closeModal('exchangeWithdrawModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Токены снимаются с вашего ID и превращаются в коды. Сохраните их — показать их можно только один раз.</p>
+  <div id="exchangeWithdrawError"></div>
+  <div id="exchangeWithdrawResult"></div>
+  <div class="form-group"><label>Сколько LCoin вывести (кратно 0.02)</label><input type="number" id="wdAmount" step="0.02" min="0.02" placeholder="1.00"></div>
+  <button class="btn btn-primary" onclick="exchangeWithdraw()"><svg class="ic"><use href="#i-receive"/></svg> Получить коды</button>
+</div></div>
+
+<!-- LCoin: ввод -->
+<div class="modal" id="exchangeDepositModal"><div class="modal-content">
+  <div class="modal-header"><div class="modal-title"><svg class="ic"><use href="#i-send"/></svg> Ввести коды LCoin</div>
+  <button class="modal-close" onclick="closeModal('exchangeDepositModal')"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <p class="hint">Вставьте один или несколько кодов через пробел, запятую или с новой строки.</p>
+  <div id="exchangeDepositError"></div>
+  <div class="form-group"><label>Коды</label><textarea id="depCodes" rows="4" style="font-family:monospace;font-size:12px;" placeholder="abc... xyz..."></textarea></div>
+  <button class="btn btn-primary" onclick="exchangeDeposit()"><svg class="ic"><use href="#i-send"/></svg> Ввести</button>
+</div></div>
 
 <script>
 const BASE_URL = 'https://lasbank.cloudpub.ru';
 const PRIVACY_URL = 'https://las-bank.github.io/privacy-policy';
 
-function ic(name, sizeCls) {
-  return `<svg class="ic ${sizeCls || ''}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
-}
+function ic(name, sizeCls) { return `<svg class="ic ${sizeCls||''}" aria-hidden="true"><use href="#i-${name}"/></svg>`; }
 
 const storage = (() => {
   try {
     const k = '__lb_test__';
-    window.localStorage.setItem(k, '1');
-    window.localStorage.removeItem(k);
+    window.localStorage.setItem(k, '1'); window.localStorage.removeItem(k);
     return window.localStorage;
   } catch (e) {
     const mem = {};
-    return {
-      getItem: (k) => (Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null),
-      setItem: (k, v) => { mem[k] = String(v); },
-      removeItem: (k) => { delete mem[k]; },
-    };
+    return { getItem: (k) => (Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null),
+             setItem: (k, v) => { mem[k] = String(v); }, removeItem: (k) => { delete mem[k]; } };
   }
 })();
 
 let state = { user: null, token: null, view: 'dashboard', adminSub: 'users' };
 let JWT_SUB_BUG = false;
-let invoiceCache = [];
-let selectedInvoices = new Set();
-let txCache = [];
-let adminUsersCache = [];
-let adminLoansCache = [];
-let adminInvoicesCache = [];
-let adminServiceCodesCache = [];
-let adminTxCache = [];
+let invoiceCache = []; let selectedInvoices = new Set();
+let txCache = []; let adminUsersCache = []; let adminLoansCache = [];
+let adminInvoicesCache = []; let adminServiceCodesCache = []; let adminTxCache = [];
+let feesCache = null; let marketCache = null; let portfolioCache = null;
+let adminSettingsCache = null; let adminMarketCache = null;
 
 /* ─── Тема ─── */
-function applyTheme(theme) {
-  document.body.setAttribute('data-theme', theme);
-  storage.setItem('lb_theme', theme);
-}
-function toggleTheme() {
-  const cur = document.body.getAttribute('data-theme');
-  applyTheme(cur === 'dark' ? 'light' : 'dark');
-}
-function initTheme() {
-  const saved = storage.getItem('lb_theme') || 'dark';
-  applyTheme(saved);
-}
+function applyTheme(t) { document.body.setAttribute('data-theme', t); storage.setItem('lb_theme', t); }
+function toggleTheme() { applyTheme(document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
+function initTheme() { applyTheme(storage.getItem('lb_theme') || 'dark'); }
 
 /* ─── JWT ─── */
 function decodeJwtPayload(token) {
   try {
     const b64 = String(token).split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-    const json = decodeURIComponent(atob(b64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    return JSON.parse(json);
+    return JSON.parse(decodeURIComponent(atob(b64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
   } catch (e) { return null; }
 }
 function checkToken() {
   JWT_SUB_BUG = false;
   if (!state.token) return;
   const p = decodeJwtPayload(state.token);
-  if (p && p.sub !== undefined && typeof p.sub !== 'string') {
-    JWT_SUB_BUG = true;
-    console.error('⚠️ Баг бэкенда: sub в JWT не строка → 422.');
-  }
+  if (p && p.sub !== undefined && typeof p.sub !== 'string') JWT_SUB_BUG = true;
 }
 
 /* ─── State ─── */
@@ -849,10 +528,7 @@ function saveState() {
   if (state.token && state.user) {
     storage.setItem('lb_token', state.token);
     storage.setItem('lb_user', JSON.stringify(state.user));
-  } else {
-    storage.removeItem('lb_token');
-    storage.removeItem('lb_user');
-  }
+  } else { storage.removeItem('lb_token'); storage.removeItem('lb_user'); }
 }
 
 /* ─── API ─── */
@@ -863,24 +539,15 @@ async function api(method, path, body = null) {
   let response;
   try {
     response = await fetch(BASE_URL + path, { method, headers, body: body !== null ? JSON.stringify(body) : null });
-  } catch (e) {
-    showOffline();
-    throw new Error('OFFLINE');
-  }
+  } catch (e) { showOffline(); throw new Error('OFFLINE'); }
   let data = null;
   const ct = response.headers.get('content-type') || '';
-  if (ct.includes('application/json')) {
-    try { data = await response.json(); } catch (e) { data = null; }
-  } else {
-    data = await response.text();
-  }
+  if (ct.includes('application/json')) { try { data = await response.json(); } catch (e) {} }
+  else { data = await response.text(); }
   if (!response.ok) {
     const raw = JSON.stringify(data);
     if (raw && raw.includes('Subject must be a string')) JWT_SUB_BUG = true;
-    if (response.status === 401 && state.token) {
-      logout();
-      throw new Error('Сессия истекла, войдите снова');
-    }
+    if (response.status === 401 && state.token) { logout(); throw new Error('Сессия истекла, войдите снова'); }
     const msg = (data && typeof data === 'object')
       ? (data.error || data.detail || data.msg || data.message || raw)
       : (data || ('Ошибка ' + response.status));
@@ -890,24 +557,22 @@ async function api(method, path, body = null) {
 }
 
 async function refreshMe() {
-  try {
-    const me = await api('GET', '/api/me');
-    state.user = me;
-    saveState();
-  } catch (e) {}
+  try { state.user = await api('GET', '/api/me'); saveState(); } catch (e) {}
+}
+
+async function loadFees() {
+  if (feesCache) return feesCache;
+  try { feesCache = await api('GET', '/api/fees'); } catch (e) {}
+  return feesCache;
 }
 
 function showOffline() { document.getElementById('offline').classList.add('show'); }
 function hideOffline() { document.getElementById('offline').classList.remove('show'); }
-
 async function retryConnection() {
   try {
     await fetch(BASE_URL + '/api/me', { headers: state.token ? { 'Authorization': 'Bearer ' + state.token } : {} });
-    hideOffline();
-    render();
-  } catch (e) {
-    toast('Сервер всё ещё недоступен', 'error');
-  }
+    hideOffline(); render();
+  } catch (e) { toast('Сервер всё ещё недоступен', 'error'); }
 }
 
 function toast(msg, type = 'info') {
@@ -917,30 +582,26 @@ function toast(msg, type = 'info') {
   t.className = 'show ' + type;
   setTimeout(() => { t.className = ''; }, 3200);
 }
-
 function alertBox(type, msg) {
   const icon = type === 'error' ? 'alert' : type === 'success' ? 'check' : 'info';
   return `<div class="alert ${type}">${ic(icon)}<span>${msg}</span></div>`;
 }
-
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
 /* ─── Render ─── */
 function render() {
   const app = document.getElementById('app');
-  if (!state.token || !state.user) {
-    app.innerHTML = renderAuth();
-  } else {
-    app.innerHTML = renderMain();
-    setTimeout(() => {
-      if (state.view === 'dashboard') loadDashboard();
-      else if (state.view === 'transactions') loadTransactions();
-      else if (state.view === 'invoices') loadInvoices();
-      else if (state.view === 'loans') loadMyLoans();
-      else if (state.view === 'admin') loadAdmin();
-    }, 10);
-  }
+  if (!state.token || !state.user) { app.innerHTML = renderAuth(); return; }
+  app.innerHTML = renderMain();
+  setTimeout(() => {
+    if (state.view === 'dashboard') loadDashboard();
+    else if (state.view === 'transactions') loadTransactions();
+    else if (state.view === 'invoices') loadInvoices();
+    else if (state.view === 'loans') loadMyLoans();
+    else if (state.view === 'exchange') loadExchange();
+    else if (state.view === 'admin') loadAdmin();
+  }, 10);
 }
 
 function themeToggleBtn() {
@@ -949,16 +610,13 @@ function themeToggleBtn() {
 }
 
 function renderAuth() {
-  const cur = document.body.getAttribute('data-theme');
   return `
     <div class="auth-screen">
       <div class="auth-card">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
           <div class="logo-mark">${ic('landmark', 'ic-md')}</div>
-          <div>
-            <div style="font-size:20px;font-weight:700;">LasBank</div>
-            <div style="font-size:12px;color:var(--text-dim);">Зефирский банк</div>
-          </div>
+          <div><div style="font-size:20px;font-weight:700;">LasBank</div>
+            <div style="font-size:12px;color:var(--text-dim);">Зефирский банк</div></div>
           <div style="margin-left:auto;">${themeToggleBtn()}</div>
         </div>
         <h1>Добро пожаловать</h1>
@@ -977,12 +635,8 @@ function renderAuth() {
           <div class="form-group"><label>Имя / Название</label><input type="text" id="regName" placeholder="Ivan Petrov"></div>
           <div class="form-group"><label>E-mail</label><input type="email" id="regEmail" placeholder="ivan@example.com"></div>
           <div class="form-group"><label>Пароль (мин. 6 символов)</label><input type="password" id="regPassword" placeholder="••••••"></div>
-          <div class="form-group"><label>Тип аккаунта</label>
-            <select id="regType" onchange="toggleNyul()">
-              <option value="individual">Физ. лицо</option>
-              <option value="legal">Юр. лицо</option>
-            </select>
-          </div>
+          <div class="form-group"><label>Тип аккаунта</label><select id="regType" onchange="toggleNyul()">
+            <option value="individual">Физ. лицо</option><option value="legal">Юр. лицо</option></select></div>
           <div class="form-group hidden" id="nyulGroup"><label>NYUL (номер юр. лица)</label><input type="text" id="regNyul" placeholder="ZR-7712345678"></div>
           <div class="checkbox-row">
             <input type="checkbox" id="regPrivacy">
@@ -991,8 +645,7 @@ function renderAuth() {
           <button class="btn btn-primary" onclick="doRegister()">Создать аккаунт</button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 function switchAuthTab(tab) {
@@ -1002,10 +655,7 @@ function switchAuthTab(tab) {
   document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
   document.getElementById('authError').innerHTML = '';
 }
-
-function toggleNyul() {
-  document.getElementById('nyulGroup').classList.toggle('hidden', document.getElementById('regType').value !== 'legal');
-}
+function toggleNyul() { document.getElementById('nyulGroup').classList.toggle('hidden', document.getElementById('regType').value !== 'legal'); }
 
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -1015,16 +665,12 @@ async function doLogin() {
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Загрузка...</span></div>';
   try {
     const data = await api('POST', '/api/login', { email, password });
-    state.token = data.token; state.user = data.user;
+    state.token = data.token; state.user = data.user; feesCache = null;
     saveState(); checkToken();
     toast('Добро пожаловать, ' + state.user.name + '!', 'success');
     render();
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
-
 async function doRegister() {
   const name = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim();
@@ -1039,19 +685,17 @@ async function doRegister() {
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Создаём аккаунт...</span></div>';
   try {
     const data = await api('POST', '/api/register', { name, email, password, user_type, nyul });
-    state.token = data.token; state.user = data.user;
+    state.token = data.token; state.user = data.user; feesCache = null;
     saveState(); checkToken();
-    toast('Аккаунт создан!', 'success');
-    render();
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+    toast('Аккаунт создан!', 'success'); render();
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 function logout() {
   state.token = null; state.user = null; state.view = 'dashboard';
   JWT_SUB_BUG = false; selectedInvoices.clear();
+  feesCache = null; marketCache = null; portfolioCache = null;
+  adminSettingsCache = null; adminMarketCache = null;
   saveState(); render();
 }
 
@@ -1059,19 +703,16 @@ function renderMain() {
   const u = state.user;
   const bugBanner = JWT_SUB_BUG ? alertBox('error',
     `<b>Диагностика:</b> сервер выдал JWT с полем <code>sub</code> типа number — такие токены он сам отклоняет (<code>422 Subject must be a string</code>). Фикс бэкенда: <code>"sub": str(user.id)</code>. После фикса — перелогинься.`) : '';
-  const frozenBanner = u.is_frozen ? alertBox('info', `${ic('lock')} Ваш аккаунт заморожен администратором. Действия с балансом недоступны, но вы можете просматривать данные.`) : '';
+  const frozenBanner = u.is_frozen ? alertBox('info',
+    `${ic('lock')} Ваш аккаунт заморожен администратором. Действия с балансом недоступны, но вы можете просматривать данные.`) : '';
   return `
     <div class="container">
       <div class="header">
-        <div class="logo">
-          <div class="logo-mark">${ic('landmark', 'ic-md')}</div>
-          <div>LasBank${u.is_admin ? '<span class="admin-badge">Admin</span>' : ''}</div>
-        </div>
+        <div class="logo"><div class="logo-mark">${ic('landmark', 'ic-md')}</div>
+          <div>LasBank${u.is_admin ? '<span class="admin-badge">Admin</span>' : ''}</div></div>
         <div class="user-info">
-          <div>
-            <div class="name">${escapeHtml(u.name)} ${u.is_frozen ? '<span class="badge frozen">Заморожен</span>' : ''}</div>
-            <div style="font-size:12px;color:var(--text-dim);">${escapeHtml(u.email)}</div>
-          </div>
+          <div><div class="name">${escapeHtml(u.name)} ${u.is_frozen ? '<span class="badge frozen">Заморожен</span>' : ''}</div>
+            <div style="font-size:12px;color:var(--text-dim);">${escapeHtml(u.email)}</div></div>
           ${themeToggleBtn()}
           <button class="logout-btn" onclick="logout()">${ic('logout', 'ic')} Выйти</button>
         </div>
@@ -1082,81 +723,49 @@ function renderMain() {
         <button class="tab ${state.view === 'transactions' ? 'active' : ''}" onclick="setView('transactions')">${ic('clock')} История</button>
         <button class="tab ${state.view === 'invoices' ? 'active' : ''}" onclick="setView('invoices')">${ic('file')} Счета</button>
         <button class="tab ${state.view === 'loans' ? 'active' : ''}" onclick="setView('loans')">${ic('credit-card')} Кредиты</button>
+        <button class="tab ${state.view === 'exchange' ? 'active' : ''}" onclick="setView('exchange')">${ic('coins')} LCoin</button>
         ${u.is_admin ? `<button class="tab ${state.view === 'admin' ? 'active' : ''}" onclick="setView('admin')">${ic('shield')} Админка</button>` : ''}
       </div>
       <div id="viewContent"></div>
-    </div>
-  `;
+    </div>`;
 }
-
 function setView(v) { state.view = v; render(); }
 
 /* ─── Dashboard ─── */
 async function loadDashboard() {
   const vc = document.getElementById('viewContent');
-  vc.innerHTML = `
-    <div class="grid grid-cards">
-      <div class="card balance-card">
-        <div class="label">${ic('wallet')} Баланс</div>
-        <div class="amount"><span class="spinner"></span><small>ZR</small></div>
-      </div>
-    </div>`;
+  vc.innerHTML = `<div class="grid grid-cards"><div class="card balance-card">
+    <div class="label">${ic('wallet')} Баланс</div>
+    <div class="amount"><span class="spinner"></span><small>ZTL</small></div></div></div>`;
   try {
-    const me = await api('GET', '/api/me');
-    state.user = me; saveState();
+    const me = await api('GET', '/api/me'); state.user = me; saveState();
     vc.innerHTML = renderDashboard();
-  } catch (e) {
-    if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 function renderDashboard() {
-  const u = state.user;
-  const frozen = u.is_frozen;
-  const dis = frozen ? 'disabled' : '';
+  const u = state.user; const frozen = u.is_frozen; const dis = frozen ? 'disabled' : '';
   return `
     <div class="grid grid-cards" style="margin-bottom:18px;">
       <div class="card balance-card anim-up">
         <div class="label">${ic('wallet')} Текущий баланс</div>
-        <div class="amount">${formatNumber(u.balance)}<small>ZR</small></div>
+        <div class="amount">${formatNumber(u.balance)}<small>ZTL</small></div>
         <div class="footer-info">${u.user_type === 'legal' ? 'Юр. лицо' : 'Физ. лицо'} · ID ${u.id}</div>
       </div>
     </div>
-
     <div class="card anim-up" style="margin-bottom:18px;">
       <div class="section-title">${ic('send')} Действия</div>
       <div class="quick-actions">
-        <button class="quick-action" ${dis} onclick="openModal('generateModal')">
-          <span class="qa-icon">${ic('qr', 'ic-lg')}</span>
-          <span class="label">Получить деньги</span>
-        </button>
-        <button class="quick-action" ${dis} onclick="openModal('redeemModal')">
-          <span class="qa-icon">${ic('scan', 'ic-lg')}</span>
-          <span class="label">Оплатить по коду</span>
-        </button>
-        <button class="quick-action" ${dis} onclick="openModal('byIdModal')">
-          <span class="qa-icon">${ic('user-plus', 'ic-lg')}</span>
-          <span class="label">Перевод по ID</span>
-        </button>
-        <button class="quick-action" ${dis} onclick="openModal('serviceRedeemModal')">
-          <span class="qa-icon">${ic('gift', 'ic-lg')}</span>
-          <span class="label">Сервисный код</span>
-        </button>
-        <button class="quick-action" onclick="setView('transactions')">
-          <span class="qa-icon">${ic('clock', 'ic-lg')}</span>
-          <span class="label">История</span>
-        </button>
-        <button class="quick-action" onclick="setView('invoices')">
-          <span class="qa-icon">${ic('file', 'ic-lg')}</span>
-          <span class="label">Счета</span>
-        </button>
-        <button class="quick-action" onclick="setView('loans')">
-          <span class="qa-icon">${ic('credit-card', 'ic-lg')}</span>
-          <span class="label">Кредиты</span>
-        </button>
+        <button class="quick-action" ${dis} onclick="openModal('generateModal')"><span class="qa-icon">${ic('qr', 'ic-lg')}</span><span class="label">Получить деньги</span></button>
+        <button class="quick-action" ${dis} onclick="openModal('redeemModal')"><span class="qa-icon">${ic('scan', 'ic-lg')}</span><span class="label">Оплатить по коду</span></button>
+        <button class="quick-action" ${dis} onclick="openModal('byIdModal')"><span class="qa-icon">${ic('user-plus', 'ic-lg')}</span><span class="label">Перевод по ID</span></button>
+        <button class="quick-action" ${dis} onclick="openModal('serviceRedeemModal')"><span class="qa-icon">${ic('gift', 'ic-lg')}</span><span class="label">Сервисный код</span></button>
+        <button class="quick-action" onclick="setView('transactions')"><span class="qa-icon">${ic('clock', 'ic-lg')}</span><span class="label">История</span></button>
+        <button class="quick-action" onclick="setView('invoices')"><span class="qa-icon">${ic('file', 'ic-lg')}</span><span class="label">Счета</span></button>
+        <button class="quick-action" onclick="setView('loans')"><span class="qa-icon">${ic('credit-card', 'ic-lg')}</span><span class="label">Кредиты</span></button>
+        <button class="quick-action" onclick="setView('exchange')"><span class="qa-icon">${ic('coins', 'ic-lg')}</span><span class="label">LCoin</span></button>
       </div>
     </div>
-
     <div class="card anim-up">
       <div class="section-title">${ic('info')} Информация</div>
       <div class="info-row"><span class="label">Имя</span><span class="value">${escapeHtml(u.name)}</span></div>
@@ -1165,8 +774,7 @@ function renderDashboard() {
       <div class="info-row"><span class="label">Тип аккаунта</span><span class="value">${u.user_type === 'legal' ? 'Юр. лицо' : 'Физ. лицо'}</span></div>
       ${u.nyul ? `<div class="info-row"><span class="label">NYUL</span><span class="value" style="font-family:monospace;">${escapeHtml(u.nyul)}</span></div>` : ''}
       ${u.is_frozen ? `<div class="info-row"><span class="label">Статус</span><span class="value" style="color:var(--warning)">Заморожен</span></div>` : ''}
-    </div>
-  `;
+    </div>`;
 }
 
 /* ─── Переводы ─── */
@@ -1180,31 +788,26 @@ async function generateCode() {
   try {
     const data = await api('POST', '/api/transfer-code', { amount, tx_type, note });
     closeModal('generateModal');
-    document.getElementById('genAmount').value = '';
-    document.getElementById('genNote').value = '';
+    document.getElementById('genAmount').value = ''; document.getElementById('genNote').value = '';
     err.innerHTML = '';
     showCodeDisplay(data);
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 function showCodeDisplay(data) {
   const body = document.getElementById('codeModalBody');
   body.innerHTML = `
-    <p class="hint">Покажите этот QR плательщику: кто отсканирует и оплатит — тот отправит вам ${formatNumber(data.amount)} ZR.</p>
+    <p class="hint">Покажите этот QR плательщику: кто отсканирует и оплатит — тот отправит вам ${formatNumber(data.amount)} ZTL.</p>
     <div class="qr-container">
       <div id="qrcode"></div>
       <div class="code-text">${escapeHtml(data.code)}</div>
-      <div class="amount-display">+${formatNumber(data.amount)} ZR вам</div>
+      <div class="amount-display">+${formatNumber(data.amount)} ZTL вам</div>
     </div>
     <div style="text-align:center;font-size:13px;color:var(--text-dim);">Действует до: ${new Date(data.expires_at).toLocaleString('ru-RU')}</div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="copyCode('${escapeHtml(data.code)}')">${ic('copy')} Скопировать код</button>
       <button class="btn btn-ghost" onclick="closeModal('codeModal')">Закрыть</button>
-    </div>
-  `;
+    </div>`;
   openModal('codeModal');
   setTimeout(() => {
     const qrEl = document.getElementById('qrcode');
@@ -1213,18 +816,7 @@ function showCodeDisplay(data) {
     new QRCode(qrEl, { text: data.code, width: 200, height: 200, colorDark: '#000000', colorLight: '#ffffff' });
   }, 50);
 }
-
-function copyCode(code) {
-  navigator.clipboard.writeText(code).then(() => toast('Код скопирован', 'success')).catch(() => toast('Не удалось скопировать', 'error'));
-}
-
-function toggleRedeemMode(mode) {
-  document.querySelectorAll('#redeemModal .toggle-btn').forEach((b, i) => {
-    b.classList.toggle('active', (mode === 'scan' && i === 0) || (mode === 'manual' && i === 1));
-  });
-  document.getElementById('redeemScanView').classList.toggle('hidden', mode !== 'scan');
-  document.getElementById('redeemManualView').classList.toggle('hidden', mode !== 'manual');
-}
+function copyCode(code) { navigator.clipboard.writeText(code).then(() => toast('Код скопирован', 'success')).catch(() => toast('Не удалось скопировать', 'error')); }
 
 async function redeemCode() {
   const code = (document.getElementById('redeemCode').value || '').trim().toUpperCase();
@@ -1234,15 +826,11 @@ async function redeemCode() {
   try {
     const data = await api('POST', '/api/transfer/redeem', { code });
     closeModal('redeemModal');
-    document.getElementById('redeemCode').value = '';
-    err.innerHTML = '';
-    await refreshMe();
-    render();
-    if (data.transaction) showReceipt(data.transaction, 'Оплата выполнена');
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+    document.getElementById('redeemCode').value = ''; err.innerHTML = '';
+    await refreshMe(); render();
+    if (data.transaction) showReceiptData(data.transaction);
+    toast('Оплата выполнена', 'success');
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 async function transferById() {
@@ -1258,18 +846,12 @@ async function transferById() {
   try {
     const data = await api('POST', '/api/transfer/by-id', { receiver_id, amount, tx_type, note: note || null });
     closeModal('byIdModal');
-    document.getElementById('byIdReceiver').value = '';
-    document.getElementById('byIdAmount').value = '';
-    document.getElementById('byIdNote').value = '';
+    document.getElementById('byIdReceiver').value = ''; document.getElementById('byIdAmount').value = ''; document.getElementById('byIdNote').value = '';
     err.innerHTML = '';
-    await refreshMe();
-    render();
+    await refreshMe(); render();
     toast('Перевод отправлен', 'success');
-    if (data && data.transaction) showReceipt(data.transaction, 'Перевод выполнен');
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+    if (data && data.transaction) showReceiptData(data.transaction);
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 /* ─── Сервисный код ─── */
@@ -1281,16 +863,11 @@ async function redeemServiceCode() {
   try {
     const data = await api('POST', '/api/service-code/redeem', { code });
     closeModal('serviceRedeemModal');
-    document.getElementById('serviceRedeemCode').value = '';
-    err.innerHTML = '';
-    await refreshMe();
-    render();
+    document.getElementById('serviceRedeemCode').value = ''; err.innerHTML = '';
+    await refreshMe(); render();
     toast('Сервисный код активирован!', 'success');
-    if (data.transaction) showReceipt(data.transaction, 'Сервисный код активирован');
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+    if (data.transaction) showReceiptData(data.transaction);
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 /* ─── История ─── */
@@ -1300,50 +877,41 @@ async function loadTransactions() {
   try {
     const txs = await api('GET', '/api/transactions');
     txCache = txs;
-    vc.innerHTML = `
-      <div class="card anim-up">
-        <div class="section-title">${ic('clock')} Моя история</div>
-        ${txs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Пока нет транзакций</div></div>` : txs.map(renderTransaction).join('')}
-      </div>`;
-  } catch (e) {
-    if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+    vc.innerHTML = `<div class="card anim-up">
+      <div class="section-title">${ic('clock')} Моя история</div>
+      ${txs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Пока нет транзакций</div></div>` : txs.map(renderTransaction).join('')}
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 function renderTransaction(t) {
   const uid = state.user.id;
   const isIn = t.receiver_id === uid;
-  const isSystem = t.sender_id === null;
-  const other = isSystem ? 'Система' : (isIn ? t.sender_name : t.receiver_name);
+  const isSystem = t.sender_id === null || t.sender_id === 1 && t.tx_type === 'Комиссия';
+  const other = isSystem ? 'LasBank' : (isIn ? t.sender_name : t.receiver_name);
   const arrow = isIn ? 'receive' : 'send';
   const sign = isIn ? '+' : '−';
   const dt = new Date(t.created_at).toLocaleString('ru-RU');
-  return `
-    <div class="list-item">
-      <div class="left">
-        <div class="title" style="display:flex;align-items:center;gap:8px;">
-          <span style="color:${isIn ? 'var(--success)' : 'var(--danger)'}">${ic(arrow)}</span>
-          ${escapeHtml(other)} ${t.tx_type ? '· ' + escapeHtml(t.tx_type) : ''}
-          ${isSystem ? '<span class="badge service">система</span>' : ''}
-        </div>
-        <div class="meta">${dt}${t.note ? ' · ' + escapeHtml(t.note) : ''}</div>
+  return `<div class="list-item">
+    <div class="left">
+      <div class="title" style="display:flex;align-items:center;gap:8px;">
+        <span style="color:${isIn ? 'var(--success)' : 'var(--danger)'}">${ic(arrow)}</span>
+        ${escapeHtml(other)} ${t.tx_type ? '· ' + escapeHtml(t.tx_type) : ''}
+        ${isSystem ? '<span class="badge service">банк</span>' : ''}
       </div>
-      <div class="row-actions">
-        <div class="amount ${isIn ? 'in' : 'out'}">${sign}${formatNumber(t.amount)} ZR</div>
-        <button class="btn btn-ghost btn-icon" title="Чек" onclick="showReceiptById(${t.id})">${ic('receipt')}</button>
-      </div>
-    </div>`;
+      <div class="meta">${dt}${t.note ? ' · ' + escapeHtml(t.note) : ''}</div>
+    </div>
+    <div class="row-actions">
+      <div class="amount ${isIn ? 'in' : 'out'}">${sign}${formatNumber(t.amount)} ZTL</div>
+      <button class="btn btn-ghost btn-icon" title="Чек" onclick="showReceiptById(${t.id})">${ic('receipt')}</button>
+    </div>
+  </div>`;
 }
 
 async function showReceiptById(id) {
-  try {
-    const data = await api('GET', `/api/transactions/${id}/receipt`);
-    showReceiptData(data);
-  } catch (e) {
-    if (e.message !== 'OFFLINE') toast(e.message, 'error');
-  }
+  try { const data = await api('GET', `/api/transactions/${id}/receipt`); showReceiptData(data); }
+  catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
 }
-
 function showReceiptData(data) {
   const body = document.getElementById('receiptModalBody');
   const isIn = data.receiver_name === (state.user && state.user.name);
@@ -1351,13 +919,12 @@ function showReceiptData(data) {
     <h3 style="margin-bottom:12px;">Чек</h3>
     <div class="info-row"><span class="label">Отправитель</span><span class="value">${escapeHtml(data.sender_name)}</span></div>
     <div class="info-row"><span class="label">Получатель</span><span class="value">${escapeHtml(data.receiver_name)}</span></div>
-    <div class="info-row"><span class="label">Сумма</span><span class="value" style="color:${isIn ? 'var(--success)' : 'var(--danger)'};font-weight:700;">${isIn ? '+' : '−'}${formatNumber(data.amount)} ZR</span></div>
+    <div class="info-row"><span class="label">Сумма</span><span class="value" style="color:${isIn ? 'var(--success)' : 'var(--danger)'};font-weight:700;">${isIn ? '+' : '−'}${formatNumber(data.amount)} ZTL</span></div>
     <div class="info-row"><span class="label">Тип</span><span class="value">${escapeHtml(data.tx_type)}</span></div>
     <div class="info-row"><span class="label">Дата</span><span class="value">${new Date(data.created_at).toLocaleString('ru-RU')}</span></div>
     ${data.note ? `<div class="info-row"><span class="label">Заметка</span><span class="value">${escapeHtml(data.note)}</span></div>` : ''}
     ${data.receipt ? `<div class="receipt">${escapeHtml(data.receipt)}</div>` : ''}
-    <button class="btn btn-ghost" style="margin-top:14px;width:100%;" onclick="closeModal('receiptModal')">Закрыть</button>
-  `;
+    <button class="btn btn-ghost" style="margin-top:14px;width:100%;" onclick="closeModal('receiptModal')">Закрыть</button>`;
   openModal('receiptModal');
 }
 
@@ -1370,97 +937,76 @@ async function loadInvoices() {
     invoiceCache = invs;
     selectedInvoices = new Set(invs.filter(i => selectedInvoices.has(i.id)).map(i => i.id));
     vc.innerHTML = renderInvoices();
-  } catch (e) {
-    if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 function renderInvoices() {
   const invs = invoiceCache;
-  if (!invs.length) {
-    return `<div class="card anim-up">
-      <div class="section-title">${ic('file')} Неоплаченные счета</div>
-      <div class="empty-state">${ic('check', 'ic-lg')}<div>Нет неоплаченных счетов</div></div>
-    </div>`;
-  }
+  if (!invs.length) return `<div class="card anim-up">
+    <div class="section-title">${ic('file')} Неоплаченные счета</div>
+    <div class="empty-state">${ic('check', 'ic-lg')}<div>Нет неоплаченных счетов</div></div></div>`;
   const sel = invs.filter(i => selectedInvoices.has(i.id));
   const selSum = sel.reduce((s, i) => s + i.amount, 0);
-  return `
-    <div class="card anim-up">
-      <div class="section-title">${ic('file')} Неоплаченные счета</div>
-      <div class="bulk-bar">
-        <label class="check">
-          <input type="checkbox" onchange="toggleAllInvoices(this.checked)" ${sel.length === invs.length ? 'checked' : ''}>
-          Выбрать все
-        </label>
-        <div class="bulk-info">Выбрано: <b>${sel.length}</b> из ${invs.length} · <b>${formatNumber(selSum)}</b> ZR</div>
-        <button class="btn btn-primary btn-sm" style="width:auto;" ${sel.length ? '' : 'disabled'} onclick="paySelectedInvoices()">
-          ${ic('card')} Оплатить выбранные
-        </button>
-      </div>
-      ${invs.map(renderInvoiceRow).join('')}
-    </div>`;
+  return `<div class="card anim-up">
+    <div class="section-title">${ic('file')} Неоплаченные счета</div>
+    <div class="bulk-bar">
+      <label class="check"><input type="checkbox" onchange="toggleAllInvoices(this.checked)" ${sel.length === invs.length ? 'checked' : ''}> Выбрать все</label>
+      <div class="bulk-info">Выбрано: <b>${sel.length}</b> из ${invs.length} · <b>${formatNumber(selSum)}</b> ZTL</div>
+      <button class="btn btn-primary btn-sm" style="width:auto;" ${sel.length ? '' : 'disabled'} onclick="paySelectedInvoices()">${ic('card')} Оплатить выбранные</button>
+    </div>
+    ${invs.map(renderInvoiceRow).join('')}
+  </div>`;
 }
 
 function renderInvoiceRow(i) {
   const dt = new Date(i.created_at).toLocaleString('ru-RU');
-  return `
-    <div class="list-item">
-      <label class="check" title="Выбрать для оплаты">
-        <input type="checkbox" ${selectedInvoices.has(i.id) ? 'checked' : ''} onchange="toggleInvoice(${i.id}, this.checked)">
-      </label>
-      <div class="left">
-        <div class="title">${escapeHtml(i.from_name)} → ${escapeHtml(i.to_name)}</div>
-        <div class="meta">#${i.id} · ${dt}${i.description ? ' · ' + escapeHtml(i.description) : ''}</div>
-      </div>
-      <div class="row-actions">
-        <div class="amount out">−${formatNumber(i.amount)} ZR</div>
-        <button class="btn btn-ghost btn-sm" onclick="showInvoiceDetails(${i.id})">${ic('card')} Оплатить</button>
-      </div>
-    </div>`;
+  const overdueLabel = i.overdue ? `<span class="badge invoiced" title="Сумма удваивается каждые 30 сек">Просрочен ×${2 ** (i.doublings || 0)}</span>` : '';
+  const dueLabel = i.due_at ? ` · до ${new Date(i.due_at).toLocaleString('ru-RU')}` : '';
+  return `<div class="list-item">
+    <label class="check" title="Выбрать для оплаты"><input type="checkbox" ${selectedInvoices.has(i.id) ? 'checked' : ''} onchange="toggleInvoice(${i.id}, this.checked)"></label>
+    <div class="left">
+      <div class="title">${escapeHtml(i.from_name)} → ${escapeHtml(i.to_name)} ${overdueLabel}</div>
+      <div class="meta">#${i.id} · ${dt}${dueLabel}${i.description ? ' · ' + escapeHtml(i.description) : ''}</div>
+      ${i.overdue ? `<div class="meta" style="color:var(--warning);">Базовая сумма: ${formatNumber(i.base_amount)} ZTL · Удвоений: ${i.doublings}</div>` : ''}
+    </div>
+    <div class="row-actions">
+      <div class="amount out">−${formatNumber(i.amount)} ZTL</div>
+      <button class="btn btn-ghost btn-sm" onclick="showInvoiceDetails(${i.id})">${ic('card')} Оплатить</button>
+    </div>
+  </div>`;
 }
-
 function toggleInvoice(id, checked) {
   if (checked) selectedInvoices.add(id); else selectedInvoices.delete(id);
   document.getElementById('viewContent').innerHTML = renderInvoices();
 }
-
 function toggleAllInvoices(checked) {
   selectedInvoices = checked ? new Set(invoiceCache.map(i => i.id)) : new Set();
   document.getElementById('viewContent').innerHTML = renderInvoices();
 }
-
 async function paySelectedInvoices() {
-  const ids = [...selectedInvoices];
-  if (!ids.length) return;
+  const ids = [...selectedInvoices]; if (!ids.length) return;
   if (!confirm(`Оплатить выбранные счета (${ids.length})?`)) return;
   let ok = 0; const fails = [];
   for (const id of ids) {
-    try {
-      await api('POST', `/api/invoices/${id}/pay`, {});
-      ok++;
-    } catch (e) {
-      if (e.message === 'OFFLINE') return;
-      fails.push(`#${id}: ${e.message}`);
-    }
+    try { await api('POST', `/api/invoices/${id}/pay`, {}); ok++; }
+    catch (e) { if (e.message === 'OFFLINE') return; fails.push(`#${id}: ${e.message}`); }
   }
-  selectedInvoices.clear();
-  await refreshMe();
-  render();
+  selectedInvoices.clear(); await refreshMe(); render();
   if (ok && !fails.length) toast(`Оплачено счетов: ${ok}`, 'success');
   else if (ok) toast(`Оплачено: ${ok}, ошибок: ${fails.length}`, 'error');
   else toast('Не удалось оплатить счета', 'error');
   if (fails.length) console.warn('Ошибки оплаты:', fails);
 }
-
 function showInvoiceDetails(id) {
-  const i = invoiceCache.find(x => x.id === id);
-  if (!i) return;
+  const i = invoiceCache.find(x => x.id === id); if (!i) return;
   const body = document.getElementById('invoiceModalBody');
   body.innerHTML = `
     <div class="info-row"><span class="label">Плательщик</span><span class="value">${escapeHtml(i.from_name)}</span></div>
     <div class="info-row"><span class="label">Получатель</span><span class="value">${escapeHtml(i.to_name)}</span></div>
-    <div class="info-row"><span class="label">Сумма</span><span class="value">${formatNumber(i.amount)} ZR</span></div>
+    <div class="info-row"><span class="label">К оплате</span><span class="value" style="font-weight:700;">${formatNumber(i.amount)} ZTL</span></div>
+    ${i.overdue ? `<div class="info-row"><span class="label">Базовая сумма</span><span class="value">${formatNumber(i.base_amount)} ZTL</span></div>
+                  <div class="info-row"><span class="label">Удвоений</span><span class="value">${i.doublings} (каждые 30 сек)</span></div>` : ''}
+    ${i.due_at ? `<div class="info-row"><span class="label">Срок оплаты</span><span class="value">${new Date(i.due_at).toLocaleString('ru-RU')}</span></div>` : ''}
     ${i.description ? `<div class="info-row"><span class="label">Описание</span><span class="value">${escapeHtml(i.description)}</span></div>` : ''}
     <div id="invoicePayError" style="margin-top:12px;"></div>
     <div class="btn-row">
@@ -1469,22 +1015,16 @@ function showInvoiceDetails(id) {
     </div>`;
   openModal('invoiceModal');
 }
-
 async function payInvoice(id) {
   const err = document.getElementById('invoicePayError');
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Оплата...</span></div>';
   try {
     const data = await api('POST', `/api/invoices/${id}/pay`, {});
-    closeModal('invoiceModal');
-    selectedInvoices.delete(id);
-    await refreshMe();
-    render();
+    closeModal('invoiceModal'); selectedInvoices.delete(id);
+    await refreshMe(); render();
     toast('Счёт оплачен', 'success');
     if (data.transaction) showReceiptData(data.transaction);
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 /* ─── Кредиты (пользователь) ─── */
@@ -1494,62 +1034,225 @@ async function loadMyLoans() {
   try {
     const loans = await api('GET', '/api/loans');
     vc.innerHTML = renderMyLoans(loans);
-  } catch (e) {
-    if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 function renderMyLoans(loans) {
   return `
     <div class="card anim-up" style="margin-bottom:18px;">
       <div class="section-title">${ic('credit-card')} Заявка на кредит</div>
-      <p class="hint">Укажите сумму, ставку и цель кредита. Администратор рассмотрит заявку и сможет скорректировать условия.</p>
+      <p class="hint">Укажите сумму, ставку (% <b>в день</b>) и срок (1–30 дней). Администратор рассмотрит заявку и сможет скорректировать условия.</p>
       <div id="loanError"></div>
-      <div class="form-group"><label>Сумма (ZR)</label><input type="number" id="loanAmount" step="0.01" min="0.01" placeholder="5000.00"></div>
-      <div class="form-group"><label>Ставка (% годовых, от 0 до 100)</label><input type="number" id="loanRate" step="0.1" min="0.1" max="100" placeholder="12.5"></div>
+      <div class="form-group"><label>Сумма (ZTL)</label><input type="number" id="loanAmount" step="0.01" min="0.01" placeholder="5000.00"></div>
+      <div class="form-group"><label>Ставка (% в день, от 0 до 100)</label><input type="number" id="loanRate" step="0.1" min="0.1" max="100" placeholder="5.0"></div>
+      <div class="form-group"><label>Срок (дней, 1–30)</label><input type="number" id="loanTermDays" min="1" max="30" step="1" placeholder="14"></div>
       <div class="form-group"><label>Цель кредита</label><textarea id="loanPurpose" placeholder="покупка ноутбука для работы"></textarea></div>
       <button class="btn btn-primary" onclick="createLoanRequest()"><svg class="ic"><use href="#i-credit-card"/></svg> Отправить заявку</button>
     </div>
     <div class="card anim-up">
       <div class="section-title">${ic('clock')} Мои заявки</div>
       ${loans.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>У вас пока нет заявок</div></div>` : loans.map(renderLoanItem).join('')}
-    </div>
-  `;
+    </div>`;
 }
+
+const REPAY_BADGES = { active: 'active', repaid: 'repaid', invoiced: 'invoiced', forgiven: 'forgiven' };
+const REPAY_LABELS = { active: 'К оплате', repaid: 'Погашен', invoiced: 'Выставлен счёт', forgiven: 'Прощён' };
 
 function renderLoanItem(l) {
   const dt = new Date(l.created_at).toLocaleString('ru-RU');
   const statusMap = { pending: 'На рассмотрении', approved: 'Одобрен', rejected: 'Отклонён' };
   const statusCls = { pending: 'pending', approved: 'approved', rejected: 'rejected' };
-  return `
-    <div class="list-item">
-      <div class="left">
-        <div class="title">Заявка #${l.id} · <span class="badge ${statusCls[l.status]}">${statusMap[l.status]}</span></div>
-        <div class="meta">${dt} · Цель: ${escapeHtml(l.purpose)}</div>
-        <div class="meta">Запрошено: ${formatNumber(l.amount)} ZR под ${l.rate}%${l.final_amount ? ' · Итог: ' + formatNumber(l.final_amount) + ' ZR под ' + l.final_rate + '%' : ''}</div>
-        ${l.admin_comment ? `<div class="meta" style="margin-top:4px;color:var(--warning);">💬 ${escapeHtml(l.admin_comment)}</div>` : ''}
-      </div>
-      <div class="amount">${formatNumber(l.amount)} ZR</div>
-    </div>`;
+  const repayBadge = l.repay_status ? `<span class="badge ${REPAY_BADGES[l.repay_status]}">${REPAY_LABELS[l.repay_status]}</span>` : '';
+  const dueStr = l.due_at ? new Date(l.due_at).toLocaleString('ru-RU') : '';
+  return `<div class="list-item">
+    <div class="left">
+      <div class="title">Заявка #${l.id} · <span class="badge ${statusCls[l.status]}">${statusMap[l.status]}</span> ${repayBadge}</div>
+      <div class="meta">${dt} · Цель: ${escapeHtml(l.purpose)}</div>
+      <div class="meta">Запрошено: ${formatNumber(l.amount)} ZTL под ${l.rate}%/день · Срок: ${l.term_days || '—'} дн.</div>
+      ${l.final_amount ? `<div class="meta">Итог: ${formatNumber(l.final_amount)} ZTL под ${l.final_rate}%/день · ${l.final_term_days} дн. · к возврату ${formatNumber(l.total_due)} ZTL</div>` : ''}
+      ${l.status === 'approved' && dueStr ? `<div class="meta">Списание: ${dueStr}</div>` : ''}
+      ${l.admin_comment ? `<div class="meta" style="margin-top:4px;color:var(--warning);">💬 ${escapeHtml(l.admin_comment)}</div>` : ''}
+    </div>
+    <div class="amount">${formatNumber(l.amount)} ZTL</div>
+  </div>`;
 }
 
 async function createLoanRequest() {
   const amount = parseFloat(document.getElementById('loanAmount').value);
   const rate = parseFloat(document.getElementById('loanRate').value);
+  const term_days = parseInt(document.getElementById('loanTermDays').value, 10);
   const purpose = document.getElementById('loanPurpose').value.trim();
   const err = document.getElementById('loanError');
   if (!amount || amount <= 0) { err.innerHTML = alertBox('error', 'Сумма должна быть > 0'); return; }
   if (!rate || rate <= 0 || rate > 100) { err.innerHTML = alertBox('error', 'Ставка должна быть в диапазоне (0, 100]'); return; }
+  if (!term_days || term_days < 1 || term_days > 30) { err.innerHTML = alertBox('error', 'Срок — целое число от 1 до 30 дней'); return; }
   if (!purpose) { err.innerHTML = alertBox('error', 'Укажите цель кредита'); return; }
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Отправляем заявку...</span></div>';
   try {
-    await api('POST', '/api/loans', { amount, rate, purpose });
+    await api('POST', '/api/loans', { amount, rate, term_days, purpose });
     toast('Заявка отправлена', 'success');
     loadMyLoans();
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
+}
+
+/* ─── LCoin ─── */
+async function loadExchange() {
+  const vc = document.getElementById('viewContent');
+  vc.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
+  try {
+    const [m, p] = await Promise.all([api('GET', '/api/market'), api('GET', '/api/portfolio')]);
+    marketCache = m; portfolioCache = p;
+    vc.innerHTML = renderExchange();
+  } catch (e) { if (e.message !== 'OFFLINE') vc.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
+}
+
+function renderExchange() {
+  const m = marketCache, p = portfolioCache;
+  if (!m || !p) return '';
+  const change = m.change_pct || 0;
+  const changeCls = change > 0 ? 'price-up' : change < 0 ? 'price-down' : 'price-flat';
+  const changeSign = change > 0 ? '+' : '';
+  const change24 = m.change_24h_pct || 0;
+  const change24Cls = change24 > 0 ? 'price-up' : change24 < 0 ? 'price-down' : 'price-flat';
+  const coinAsset = p.assets.find(a => a.symbol === 'LCoin');
+  const ztlAsset = p.assets.find(a => a.symbol === 'ZTL');
+
+  return `
+    <div class="card anim-up" style="margin-bottom:18px;">
+      <div class="section-title">${ic('coins')} ${m.symbol} — рынок</div>
+      <div class="market-header">
+        <div class="market-price">${m.price.toFixed(4)}<small>${m.currency}</small></div>
+        <div class="market-change ${changeCls}">${changeSign}${change.toFixed(2)}% за сделку</div>
+        <div class="market-change ${change24Cls}">${(change24 > 0 ? '+' : '') + change24.toFixed(2)}% за 24ч</div>
+      </div>
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:14px;">
+        Капитализация: ${formatNumber(m.market_cap)} ${m.currency} · Эмиссия: ${formatNumber(m.supply)} LCoin
+      </div>
+      ${renderMarketChart(m.history)}
+    </div>
+
+    <div class="card anim-up" style="margin-bottom:18px;">
+      <div class="section-title">${ic('wallet')} Мой портфель</div>
+      <div class="portfolio-row">
+        <div class="sym"><span class="coin-icon zl-icon">Z</span> ${m.currency}</div>
+        <div style="text-align:right;">
+          <div>${formatNumber(ztlAsset ? ztlAsset.amount : 0)}</div>
+          <div style="font-size:12px;color:var(--text-dim);">${formatNumber(ztlAsset ? ztlAsset.value : 0)} ${m.currency}</div>
+        </div>
+      </div>
+      <div class="portfolio-row">
+        <div class="sym"><span class="coin-icon">L</span> ${m.symbol}</div>
+        <div style="text-align:right;">
+          <div>${formatNumber(coinAsset ? coinAsset.amount : 0)} LCoin</div>
+          <div style="font-size:12px;color:var(--text-dim);">${formatNumber(coinAsset ? coinAsset.value : 0)} ${m.currency} (${coinAsset ? coinAsset.tokens : 0} токенов)</div>
+        </div>
+      </div>
+      <div class="portfolio-row" style="font-weight:600;">
+        <div>Итого</div>
+        <div>${formatNumber(p.total_value)} ${m.currency}</div>
+      </div>
+    </div>
+
+    <div class="card anim-up">
+      <div class="section-title">${ic('trending-up')} Торговля</div>
+      <div class="quick-actions">
+        <button class="quick-action" onclick="openModal('exchangeBuyModal')"><span class="qa-icon">${ic('plus', 'ic-lg')}</span><span class="label">Купить</span></button>
+        <button class="quick-action" onclick="openModal('exchangeSellModal')"><span class="qa-icon">${ic('minus', 'ic-lg')}</span><span class="label">Продать</span></button>
+        <button class="quick-action" onclick="openModal('exchangeWithdrawModal')"><span class="qa-icon">${ic('receive', 'ic-lg')}</span><span class="label">Вывести (коды)</span></button>
+        <button class="quick-action" onclick="openModal('exchangeDepositModal')"><span class="qa-icon">${ic('send', 'ic-lg')}</span><span class="label">Ввести коды</span></button>
+      </div>
+      <p class="hint" style="margin-top:14px;margin-bottom:0;">
+        Сделки идут по кривой: покупка повышает цену, продажа — понижает. Сделка облагается комиссией банка, комиссия учтена в стоимости.
+      </p>
+    </div>`;
+}
+
+function renderMarketChart(history) {
+  if (!history || history.length < 2) return '';
+  const prices = history.map(h => h.price);
+  const min = Math.min(...prices); const max = Math.max(...prices);
+  const range = max - min || 1;
+  const w = 500, h = 130, pad = 6;
+  const pts = prices.map((p, i) => {
+    const x = pad + (i / (prices.length - 1)) * (w - 2 * pad);
+    const y = h - pad - ((p - min) / range) * (h - 2 * pad);
+    return `${x.toFixed(2)},${y.toFixed(2)}`;
+  }).join(' ');
+  const up = prices[prices.length - 1] >= prices[0];
+  const color = up ? 'var(--success)' : 'var(--danger)';
+  return `<svg class="chart-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <polyline points="${pts}" stroke="${color}"/>
+  </svg>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);margin-top:6px;">
+    <span>48 ч назад</span><span>${min.toFixed(4)} — ${max.toFixed(4)} ${marketCache ? marketCache.currency : ''}</span><span>сейчас</span>
+  </div>`;
+}
+
+function parseLCoinAmount(val) {
+  const n = parseFloat(val);
+  if (!isFinite(n) || n <= 0) return null;
+  const tokens = Math.round(n / 0.02);
+  if (Math.abs(tokens * 0.02 - n) > 1e-9) return null;
+  return n;
+}
+
+async function exchangeBuy() {
+  const amount = parseLCoinAmount(document.getElementById('buyAmount').value);
+  const err = document.getElementById('exchangeBuyError');
+  if (amount === null) { err.innerHTML = alertBox('error', 'Количество должно быть кратно 0.02 и > 0'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Покупаем...</span></div>';
+  try {
+    const data = await api('POST', '/api/exchange/buy', { amount });
+    closeModal('exchangeBuyModal'); document.getElementById('buyAmount').value = '';
+    await refreshMe(); loadExchange();
+    toast(`Куплено ${data.coins} LCoin за ${formatNumber(data.cost)} ZTL`, 'success');
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
+}
+async function exchangeSell() {
+  const amount = parseLCoinAmount(document.getElementById('sellAmount').value);
+  const err = document.getElementById('exchangeSellError');
+  if (amount === null) { err.innerHTML = alertBox('error', 'Количество должно быть кратно 0.02 и > 0'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Продаём...</span></div>';
+  try {
+    const data = await api('POST', '/api/exchange/sell', { amount });
+    closeModal('exchangeSellModal'); document.getElementById('sellAmount').value = '';
+    await refreshMe(); loadExchange();
+    toast(`Продано ${data.coins} LCoin за ${formatNumber(data.proceeds)} ZTL`, 'success');
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
+}
+async function exchangeWithdraw() {
+  const amount = parseLCoinAmount(document.getElementById('wdAmount').value);
+  const err = document.getElementById('exchangeWithdrawError');
+  const res = document.getElementById('exchangeWithdrawResult');
+  if (amount === null) { err.innerHTML = alertBox('error', 'Количество должно быть кратно 0.02 и > 0'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Готовим коды...</span></div>';
+  res.innerHTML = '';
+  try {
+    const data = await api('POST', '/api/exchange/withdraw', { amount });
+    err.innerHTML = '';
+    document.getElementById('wdAmount').value = '';
+    res.innerHTML = `<div class="alert success">${ic('check')} Готово. Сохраните коды:</div>
+      <textarea readonly style="font-family:monospace;font-size:12px;min-height:160px;">${escapeHtml(data.codes.join('\n'))}</textarea>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:6px;">Всего ${data.tokens} токенов = ${data.coins} LCoin. Показываются один раз.</div>`;
+    loadExchange();
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
+}
+async function exchangeDeposit() {
+  const raw = document.getElementById('depCodes').value.trim();
+  const err = document.getElementById('exchangeDepositError');
+  if (!raw) { err.innerHTML = alertBox('error', 'Введите хотя бы один код'); return; }
+  const codes = raw.split(/[\s,;]+/).filter(Boolean);
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Проверяем коды...</span></div>';
+  try {
+    const data = await api('POST', '/api/exchange/deposit', { codes });
+    document.getElementById('depCodes').value = '';
+    if (data.rejected && data.rejected.length) {
+      err.innerHTML = alertBox('error', `Принято ${data.accepted} кодов (${data.coins} LCoin). Не принято: ${data.rejected.length}`);
+    } else {
+      err.innerHTML = alertBox('success', `Принято ${data.accepted} кодов = ${data.coins} LCoin`);
+    }
+    loadExchange();
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 /* ─── Админка ─── */
@@ -1559,19 +1262,20 @@ async function loadAdmin() {
   vc.innerHTML = `
     <div class="card anim-up" style="margin-bottom:18px;">
       <div class="section-title">${ic('shield')} Админ-панель</div>
-      <div class="tabs" style="margin-bottom:0;">
+      <div class="tabs" style="margin-bottom:0;flex-wrap:wrap;">
         <button class="tab ${state.adminSub === 'users' ? 'active' : ''}" onclick="setAdminSub('users')">${ic('users')} Пользователи</button>
         <button class="tab ${state.adminSub === 'loans' ? 'active' : ''}" onclick="setAdminSub('loans')">${ic('credit-card')} Кредиты</button>
         <button class="tab ${state.adminSub === 'txs' ? 'active' : ''}" onclick="setAdminSub('txs')">${ic('clock')} Транзакции</button>
         <button class="tab ${state.adminSub === 'invoices' ? 'active' : ''}" onclick="setAdminSub('invoices')">${ic('file')} Счета</button>
         <button class="tab ${state.adminSub === 'service' ? 'active' : ''}" onclick="setAdminSub('service')">${ic('gift')} Сервисные коды</button>
+        <button class="tab ${state.adminSub === 'settings' ? 'active' : ''}" onclick="setAdminSub('settings')">${ic('settings')} Настройки</button>
+        <button class="tab ${state.adminSub === 'market' ? 'active' : ''}" onclick="setAdminSub('market')">${ic('coins')} LCoin</button>
         <button class="tab ${state.adminSub === 'tools' ? 'active' : ''}" onclick="setAdminSub('tools')">${ic('wrench')} Инструменты</button>
       </div>
     </div>
     <div id="adminContent"></div>`;
   await loadAdminSub();
 }
-
 function setAdminSub(s) { state.adminSub = s; loadAdmin(); }
 
 async function loadAdminSub() {
@@ -1580,6 +1284,8 @@ async function loadAdminSub() {
   else if (state.adminSub === 'txs') await loadAdminTxs();
   else if (state.adminSub === 'invoices') await loadAdminInvoices();
   else if (state.adminSub === 'service') await loadAdminServiceCodes();
+  else if (state.adminSub === 'settings') await loadAdminSettings();
+  else if (state.adminSub === 'market') await loadAdminMarket();
   else renderAdminTools();
 }
 
@@ -1587,135 +1293,184 @@ async function loadAdminUsers() {
   const el = document.getElementById('adminContent');
   el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
   try {
-    const users = await api('GET', '/api/admin/users');
-    adminUsersCache = users;
-    el.innerHTML = `
-      <div class="card anim-up">
-        <div class="section-title">${ic('users')} Все пользователи (${users.length})</div>
-        ${users.map(u => `
-          <div class="list-item">
-            <div class="left">
-              <div class="title">${escapeHtml(u.name)} ${u.is_admin ? '<span class="admin-badge">Admin</span>' : ''} ${u.is_frozen ? '<span class="badge frozen">Заморожен</span>' : ''}</div>
-              <div class="meta">ID ${u.id} · ${escapeHtml(u.email)} · ${u.user_type === 'legal' ? 'Юр. лицо' : 'Физ. лицо'}${u.nyul ? ' · ' + escapeHtml(u.nyul) : ''}</div>
-            </div>
-            <div class="row-actions">
-              <div class="amount ${u.balance >= 0 ? 'in' : 'out'}">${formatNumber(u.balance)} ZR</div>
-              <button class="btn btn-ghost btn-icon" title="Редактировать" onclick="openAdminUserModal(${u.id})">${ic('edit')}</button>
-              <button class="btn btn-danger btn-icon" title="Удалить" onclick="adminDeleteUser(${u.id})">${ic('trash')}</button>
-            </div>
-          </div>`).join('')}
-      </div>`;
-  } catch (e) {
-    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+    const users = await api('GET', '/api/admin/users'); adminUsersCache = users;
+    el.innerHTML = `<div class="card anim-up">
+      <div class="section-title">${ic('users')} Все пользователи (${users.length})</div>
+      ${users.map(u => `
+        <div class="list-item">
+          <div class="left">
+            <div class="title">${escapeHtml(u.name)} ${u.is_admin ? '<span class="admin-badge">Admin</span>' : ''} ${u.is_frozen ? '<span class="badge frozen">Заморожен</span>' : ''}</div>
+            <div class="meta">ID ${u.id} · ${escapeHtml(u.email)} · ${u.user_type === 'legal' ? 'Юр. лицо' : 'Физ. лицо'}${u.nyul ? ' · ' + escapeHtml(u.nyul) : ''}</div>
+          </div>
+          <div class="row-actions">
+            <div class="amount ${u.balance >= 0 ? 'in' : 'out'}">${formatNumber(u.balance)} ZTL</div>
+            <button class="btn btn-ghost btn-icon" title="Редактировать" onclick="openAdminUserModal(${u.id})">${ic('edit')}</button>
+            <button class="btn btn-danger btn-icon" title="Удалить" onclick="adminDeleteUser(${u.id})">${ic('trash')}</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 async function loadAdminLoans() {
   const el = document.getElementById('adminContent');
   el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
   try {
-    const loans = await api('GET', '/api/admin/loans');
-    adminLoansCache = loans;
-    el.innerHTML = `
-      <div class="card anim-up">
-        <div class="section-title">${ic('credit-card')} Кредитные заявки (${loans.length})</div>
-        ${loans.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет заявок</div></div>` : loans.map(l => `
-          <div class="list-item">
-            <div class="left">
-              <div class="title">#${l.id} · ${escapeHtml(l.user_name)} <span class="badge ${l.status === 'pending' ? 'pending' : l.status === 'approved' ? 'approved' : 'rejected'}">${l.status === 'pending' ? 'На рассмотрении' : l.status === 'approved' ? 'Одобрен' : 'Отклонён'}</span></div>
-              <div class="meta">${new Date(l.created_at).toLocaleString('ru-RU')} · Цель: ${escapeHtml(l.purpose)}</div>
-              <div class="meta">Запрошено: ${formatNumber(l.amount)} ZR под ${l.rate}%${l.final_amount ? ' · Итог: ' + formatNumber(l.final_amount) + ' ZR под ' + l.final_rate + '%' : ''}</div>
-              ${l.admin_comment ? `<div class="meta" style="color:var(--warning);">💬 ${escapeHtml(l.admin_comment)}</div>` : ''}
-            </div>
-            <div class="row-actions">
-              ${l.status === 'pending' ? `<button class="btn btn-secondary btn-sm" onclick="openAdminLoanModal(${l.id})">${ic('edit')} Рассмотреть</button>` : ''}
-            </div>
-          </div>`).join('')}
-      </div>`;
-  } catch (e) {
-    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
+    const loans = await api('GET', '/api/admin/loans'); adminLoansCache = loans;
+    el.innerHTML = `<div class="card anim-up">
+      <div class="section-title">${ic('credit-card')} Кредитные заявки (${loans.length})</div>
+      <div style="margin-bottom:14px;">
+        <button class="btn btn-primary btn-sm" style="width:auto;" onclick="openAdminDirectLoanModal()">${ic('plus')} Выдать кредит напрямую</button>
+      </div>
+      ${loans.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет заявок</div></div>` : loans.map(renderAdminLoanItem).join('')}
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
+}
+
+function renderAdminLoanItem(l) {
+  const statusMap = { pending: 'На рассмотрении', approved: 'Одобрен', rejected: 'Отклонён' };
+  const statusCls = { pending: 'pending', approved: 'approved', rejected: 'rejected' };
+  const repayBadge = l.repay_status ? `<span class="badge ${REPAY_BADGES[l.repay_status]}">${REPAY_LABELS[l.repay_status]}</span>` : '';
+  const actions = [];
+  if (l.status === 'pending') {
+    actions.push(`<button class="btn btn-secondary btn-sm" onclick="openAdminLoanModal(${l.id})">${ic('edit')} Рассмотреть</button>`);
   }
+  if (l.status === 'approved' && l.repay_status === 'active') {
+    actions.push(`<button class="btn btn-secondary btn-sm" onclick="openAdminLoanModal(${l.id})">${ic('edit')} Условия</button>`);
+    actions.push(`<button class="btn btn-success btn-sm" onclick="adminCollectLoan(${l.id})">${ic('banknote')} Списать</button>`);
+    actions.push(`<button class="btn btn-danger btn-sm" onclick="adminForgiveLoan(${l.id})">${ic('check')} Простить</button>`);
+  }
+  if (l.repay_status === 'invoiced') {
+    actions.push(`<button class="btn btn-success btn-sm" onclick="adminForgiveLoan(${l.id})">${ic('check')} Простить остаток</button>`);
+  }
+  actions.push(`<button class="btn btn-ghost btn-sm" onclick="adminDeleteLoan(${l.id})" title="Удалить">${ic('trash')}</button>`);
+  const dueStr = l.due_at ? ` · Списание: ${new Date(l.due_at).toLocaleString('ru-RU')}` : '';
+  return `<div class="list-item">
+    <div class="left">
+      <div class="title">#${l.id} · ${escapeHtml(l.user_name)} <span class="badge ${statusCls[l.status]}">${statusMap[l.status]}</span> ${repayBadge}</div>
+      <div class="meta">${new Date(l.created_at).toLocaleString('ru-RU')} · Цель: ${escapeHtml(l.purpose)}</div>
+      <div class="meta">Запрошено: ${formatNumber(l.amount)} ZTL под ${l.rate}%/день · Срок: ${l.term_days || '—'} дн.</div>
+      ${l.final_amount ? `<div class="meta">Итог: ${formatNumber(l.final_amount)} ZTL под ${l.final_rate}%/день · ${l.final_term_days} дн. · к возврату ${formatNumber(l.total_due)} ZTL${dueStr}</div>` : ''}
+      ${l.admin_comment ? `<div class="meta" style="color:var(--warning);">💬 ${escapeHtml(l.admin_comment)}</div>` : ''}
+    </div>
+    <div class="row-actions">${actions.join('')}</div>
+  </div>`;
 }
 
 async function loadAdminTxs() {
   const el = document.getElementById('adminContent');
   el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
   try {
-    const txs = await api('GET', '/api/admin/transactions');
-    adminTxCache = txs;
-    el.innerHTML = `
-      <div class="card anim-up">
-        <div class="section-title">${ic('clock')} Все транзакции (${txs.length})</div>
-        ${txs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет транзакций</div></div>` : txs.map(t => `
-          <div class="list-item">
-            <div class="left">
-              <div class="title">#${t.id} · ${escapeHtml(t.sender_name || 'SYSTEM')} → ${escapeHtml(t.receiver_name || 'SYSTEM')} · ${escapeHtml(t.tx_type)}</div>
-              <div class="meta">${new Date(t.created_at).toLocaleString('ru-RU')}${t.note ? ' · ' + escapeHtml(t.note) : ''}</div>
-            </div>
-            <div class="row-actions">
-              <div class="amount">${formatNumber(t.amount)} ZR</div>
-              <button class="btn btn-secondary btn-icon" title="Чек" onclick="showReceiptById(${t.id})">${ic('receipt')}</button>
-              <button class="btn btn-secondary btn-icon" title="Изменить" onclick="editTransaction(${t.id})">${ic('edit')}</button>
-              <button class="btn btn-danger btn-icon" title="Удалить" onclick="deleteTransaction(${t.id})">${ic('trash')}</button>
-            </div>
-          </div>`).join('')}
-      </div>`;
-  } catch (e) {
-    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+    const txs = await api('GET', '/api/admin/transactions'); adminTxCache = txs;
+    el.innerHTML = `<div class="card anim-up">
+      <div class="section-title">${ic('clock')} Все транзакции (${txs.length})</div>
+      ${txs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет транзакций</div></div>` : txs.map(t => `
+        <div class="list-item">
+          <div class="left">
+            <div class="title">#${t.id} · ${escapeHtml(t.sender_name || 'LasBank')} → ${escapeHtml(t.receiver_name || 'LasBank')} · ${escapeHtml(t.tx_type)}</div>
+            <div class="meta">${new Date(t.created_at).toLocaleString('ru-RU')}${t.note ? ' · ' + escapeHtml(t.note) : ''}</div>
+          </div>
+          <div class="row-actions">
+            <div class="amount">${formatNumber(t.amount)} ZTL</div>
+            <button class="btn btn-secondary btn-icon" title="Чек" onclick="showReceiptById(${t.id})">${ic('receipt')}</button>
+            <button class="btn btn-secondary btn-icon" title="Изменить" onclick="editTransaction(${t.id})">${ic('edit')}</button>
+            <button class="btn btn-danger btn-icon" title="Удалить" onclick="deleteTransaction(${t.id})">${ic('trash')}</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 async function loadAdminInvoices() {
   const el = document.getElementById('adminContent');
   el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
   try {
-    const invs = await api('GET', '/api/admin/invoices');
-    adminInvoicesCache = invs;
-    el.innerHTML = `
-      <div class="card anim-up">
-        <div class="section-title">${ic('file')} Все счета (${invs.length})</div>
-        ${invs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет счетов</div></div>` : invs.map(i => `
-          <div class="list-item">
-            <div class="left">
-              <div class="title">#${i.id} · ${escapeHtml(i.from_name)} → ${escapeHtml(i.to_name)} <span class="badge ${i.status === 'paid' ? 'approved' : 'pending'}">${i.status === 'paid' ? 'Оплачен' : 'Ожидает'}</span></div>
-              <div class="meta">${new Date(i.created_at).toLocaleString('ru-RU')}${i.description ? ' · ' + escapeHtml(i.description) : ''}</div>
-            </div>
-            <div class="row-actions">
-              <div class="amount">${formatNumber(i.amount)} ZR</div>
-              ${i.status !== 'paid' ? `<button class="btn btn-secondary btn-icon" title="Изменить" onclick="adminEditInvoice(${i.id})">${ic('edit')}</button>` : ''}
-              ${i.status !== 'paid' ? `<button class="btn btn-danger btn-icon" title="Удалить" onclick="adminDeleteInvoice(${i.id})">${ic('trash')}</button>` : ''}
-            </div>
-          </div>`).join('')}
-      </div>`;
-  } catch (e) {
-    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+    const invs = await api('GET', '/api/admin/invoices'); adminInvoicesCache = invs;
+    el.innerHTML = `<div class="card anim-up">
+      <div class="section-title">${ic('file')} Все счета (${invs.length})</div>
+      ${invs.length === 0 ? `<div class="empty-state">${ic('inbox', 'ic-lg')}<div>Нет счетов</div></div>` : invs.map(i => {
+        const overdueLbl = i.overdue ? ` <span class="badge invoiced">Просрочен ×${2 ** (i.doublings || 0)}</span>` : '';
+        return `<div class="list-item">
+          <div class="left">
+            <div class="title">#${i.id} · ${escapeHtml(i.from_name)} → ${escapeHtml(i.to_name)} <span class="badge ${i.status === 'paid' ? 'approved' : 'pending'}">${i.status === 'paid' ? 'Оплачен' : 'Ожидает'}</span>${overdueLbl}</div>
+            <div class="meta">${new Date(i.created_at).toLocaleString('ru-RU')}${i.due_at ? ' · до ' + new Date(i.due_at).toLocaleString('ru-RU') : ''}${i.description ? ' · ' + escapeHtml(i.description) : ''}</div>
+            ${i.overdue ? `<div class="meta" style="color:var(--warning);">База ${formatNumber(i.base_amount)} ZTL · Удвоений ${i.doublings}</div>` : ''}
+          </div>
+          <div class="row-actions">
+            <div class="amount">${formatNumber(i.amount)} ZTL</div>
+            ${i.status !== 'paid' ? `<button class="btn btn-secondary btn-icon" title="Изменить" onclick="adminEditInvoice(${i.id})">${ic('edit')}</button>` : ''}
+            ${i.status !== 'paid' ? `<button class="btn btn-danger btn-icon" title="Удалить" onclick="adminDeleteInvoice(${i.id})">${ic('trash')}</button>` : ''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 async function loadAdminServiceCodes() {
   const el = document.getElementById('adminContent');
   el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
   try {
-    const codes = await api('GET', '/api/admin/service-codes');
-    adminServiceCodesCache = codes;
-    el.innerHTML = `
-      <div class="card anim-up">
-        <div class="section-title">${ic('gift')} Сервисные коды (${codes.length})</div>
-        <div style="margin-bottom:14px;">
-          <button class="btn btn-primary btn-sm" style="width:auto;" onclick="openModal('adminServiceCodeModal')">${ic('gift')} Создать сервисный код</button>
-        </div>
-        ${codes.length === 0 ? `<div class="empty-state">${ic('gift', 'ic-lg')}<div>Нет сервисных кодов</div></div>` : codes.map(c => `
-          <div class="list-item">
-            <div class="left">
-              <div class="title">${escapeHtml(c.code)} ${c.used ? '<span class="badge approved">Использован</span>' : '<span class="badge pending">Активен</span>'}</div>
-              <div class="meta">${formatNumber(c.amount)} ZR · ${escapeHtml(c.tx_type)} · ${new Date(c.created_at).toLocaleString('ru-RU')}${c.note ? ' · ' + escapeHtml(c.note) : ''}${c.used && c.redeemed_by_id ? ' · Активировал ID ' + c.redeemed_by_id : ''}</div>
-            </div>
-            <div class="amount">${formatNumber(c.amount)} ZR</div>
-          </div>`).join('')}
-      </div>`;
-  } catch (e) {
-    if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`;
-  }
+    const codes = await api('GET', '/api/admin/service-codes'); adminServiceCodesCache = codes;
+    el.innerHTML = `<div class="card anim-up service-code-card">
+      <div class="section-title">${ic('gift')} Сервисные коды (${codes.length})</div>
+      <div style="margin-bottom:14px;">
+        <button class="btn btn-primary btn-sm" style="width:auto;" onclick="openModal('adminServiceCodeModal')">${ic('gift')} Создать сервисный код</button>
+      </div>
+      ${codes.length === 0 ? `<div class="empty-state">${ic('gift', 'ic-lg')}<div>Нет сервисных кодов</div></div>` : codes.map(c => `
+        <div class="list-item">
+          <div class="left">
+            <div class="title">${escapeHtml(c.code)} ${c.used ? '<span class="badge approved">Использован</span>' : '<span class="badge pending">Активен</span>'}</div>
+            <div class="meta">${formatNumber(c.amount)} ZTL · ${escapeHtml(c.tx_type)} · ${new Date(c.created_at).toLocaleString('ru-RU')}${c.note ? ' · ' + escapeHtml(c.note) : ''}${c.used && c.redeemed_by_id ? ' · Активировал ID ' + c.redeemed_by_id : ''}</div>
+          </div>
+          <div class="amount">${formatNumber(c.amount)} ZTL</div>
+        </div>`).join('')}
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
+}
+
+async function loadAdminSettings() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
+  try {
+    adminSettingsCache = await api('GET', '/api/admin/settings');
+    el.innerHTML = `<div class="card anim-up">
+      <div class="section-title">${ic('settings')} Настройки системы</div>
+      <div class="info-row"><span class="label">Комиссия (commission_pct)</span><span class="value">${adminSettingsCache.commission_pct}%</span></div>
+      <div class="info-row"><span class="label">Подоходный налог (income_tax_pct)</span><span class="value">${adminSettingsCache.income_tax_pct}%</span></div>
+      <div class="info-row"><span class="label">Глубина рынка LCoin</span><span class="value">${formatNumber(adminSettingsCache.coin_liquidity)}</span></div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="openAdminSettingsModal()">${ic('edit')} Изменить</button></div>
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
+}
+
+async function loadAdminMarket() {
+  const el = document.getElementById('adminContent');
+  el.innerHTML = '<div class="card"><div class="empty-state"><span class="spinner"></span></div></div>';
+  try {
+    adminMarketCache = await api('GET', '/api/admin/market');
+    const m = adminMarketCache;
+    const change = m.change_pct || 0;
+    const cls = change > 0 ? 'price-up' : change < 0 ? 'price-down' : 'price-flat';
+    el.innerHTML = `<div class="card anim-up" style="margin-bottom:18px;">
+      <div class="section-title">${ic('coins')} LCoin — админ-панель</div>
+      <div class="market-header">
+        <div class="market-price">${m.price.toFixed(4)}<small>${m.currency}</small></div>
+        <div class="market-change ${cls}">${change > 0 ? '+' : ''}${change.toFixed(2)}%</div>
+      </div>
+      <div class="info-row"><span class="label">Капитализация</span><span class="value">${formatNumber(m.market_cap)} ${m.currency}</span></div>
+      <div class="info-row"><span class="label">Эмиссия</span><span class="value">${formatNumber(m.supply)} LCoin</span></div>
+      <div class="info-row"><span class="label">Токенов всего</span><span class="value">${m.tokens_total}</span></div>
+      <div class="info-row"><span class="label">Привязано к ID</span><span class="value">${m.tokens_owned}</span></div>
+      <div class="info-row"><span class="label">Свободных токенов</span><span class="value">${m.tokens_unbound}</span></div>
+      <div class="info-row"><span class="label">Ликвидность</span><span class="value">${formatNumber(m.coin_liquidity)}</span></div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="openAdminMarketPrice()">${ic('edit')} Установить цену</button></div>
+    </div>
+    <div class="card anim-up">
+      <div class="section-title">${ic('trending-up')} График</div>
+      ${renderMarketChart(m.history)}
+    </div>`;
+  } catch (e) { if (e.message !== 'OFFLINE') el.innerHTML = `<div class="card">${alertBox('error', escapeHtml(e.message))}</div>`; }
 }
 
 function renderAdminTools() {
@@ -1736,6 +1491,11 @@ function renderAdminTools() {
         <p class="hint">Создать бессрочный код для активации</p>
         <button class="btn btn-primary" onclick="openModal('adminServiceCodeModal')">Создать</button>
       </div>
+      <div class="card anim-up">
+        <div class="section-title">${ic('credit-card')} Выдать кредит</div>
+        <p class="hint">Прямая выдача кредита со счёта LasBank</p>
+        <button class="btn btn-primary" onclick="openAdminDirectLoanModal()">Открыть</button>
+      </div>
     </div>`;
 }
 
@@ -1744,12 +1504,11 @@ async function openAdminBalance() {
   try {
     const users = await api('GET', '/api/admin/users');
     document.getElementById('abUserId').innerHTML = users.map(u =>
-      `<option value="${u.id}">${escapeHtml(u.name)} (${formatNumber(u.balance)} ZR)</option>`).join('');
+      `<option value="${u.id}">${escapeHtml(u.name)} (${formatNumber(u.balance)} ZTL)</option>`).join('');
     document.getElementById('adminBalanceError').innerHTML = '';
     openModal('adminBalanceModal');
   } catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
 }
-
 async function openAdminInvoice() {
   try {
     const users = await api('GET', '/api/admin/users');
@@ -1757,10 +1516,10 @@ async function openAdminInvoice() {
     document.getElementById('aiFromId').innerHTML = opts;
     document.getElementById('aiToId').innerHTML = opts;
     document.getElementById('adminInvoiceError').innerHTML = '';
+    document.getElementById('aiDueSeconds').value = '';
     openModal('adminInvoiceModal');
   } catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
 }
-
 async function adminSetBalance() {
   const user_id = parseInt(document.getElementById('abUserId').value);
   const balance = parseFloat(document.getElementById('abBalance').value);
@@ -1769,36 +1528,28 @@ async function adminSetBalance() {
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Обновляем...</span></div>';
   try {
     const data = await api('POST', '/api/admin/balance', { user_id, balance });
-    closeModal('adminBalanceModal');
-    toast(data.message || 'Баланс обновлён', 'success');
-    loadAdminSub();
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+    closeModal('adminBalanceModal'); toast(data.message || 'Баланс обновлён', 'success'); loadAdminSub();
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
-
 async function adminCreateInvoice() {
   const from_id = parseInt(document.getElementById('aiFromId').value);
   const to_id = parseInt(document.getElementById('aiToId').value);
   const amount = parseFloat(document.getElementById('aiAmount').value);
   const description = document.getElementById('aiDescription').value.trim();
+  const dueSec = document.getElementById('aiDueSeconds').value;
   const err = document.getElementById('adminInvoiceError');
   if (!from_id || !to_id || !amount || amount <= 0) { err.innerHTML = alertBox('error', 'Заполните все поля корректно'); return; }
+  const body = { from_id, to_id, amount, description };
+  if (dueSec) body.due_in_seconds = parseFloat(dueSec);
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Создаём счёт...</span></div>';
   try {
-    await api('POST', '/api/admin/invoice', { from_id, to_id, amount, description });
-    closeModal('adminInvoiceModal');
-    toast('Счёт выставлен', 'success');
-    document.getElementById('aiAmount').value = '';
-    document.getElementById('aiDescription').value = '';
+    await api('POST', '/api/admin/invoice', body);
+    closeModal('adminInvoiceModal'); toast('Счёт выставлен', 'success');
+    document.getElementById('aiAmount').value = ''; document.getElementById('aiDescription').value = '';
+    document.getElementById('aiDueSeconds').value = '';
     loadAdminSub();
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
-
 async function adminCreateServiceCode() {
   const amount = parseFloat(document.getElementById('scAmount').value);
   const tx_type = document.getElementById('scTxType').value;
@@ -1809,20 +1560,14 @@ async function adminCreateServiceCode() {
   try {
     const data = await api('POST', '/api/admin/service-code', { amount, tx_type, note });
     closeModal('adminServiceCodeModal');
-    document.getElementById('scAmount').value = '';
-    document.getElementById('scNote').value = '';
+    document.getElementById('scAmount').value = ''; document.getElementById('scNote').value = '';
     err.innerHTML = '';
     toast('Сервисный код создан: ' + data.code, 'success');
     loadAdminSub();
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
-
 function openAdminUserModal(id) {
-  const u = adminUsersCache.find(x => x.id === id);
-  if (!u) return;
+  const u = adminUsersCache.find(x => x.id === id); if (!u) return;
   document.getElementById('auUserId').value = u.id;
   document.getElementById('auName').value = u.name;
   document.getElementById('auEmail').value = u.email;
@@ -1835,7 +1580,6 @@ function openAdminUserModal(id) {
   document.getElementById('adminUserError').innerHTML = '';
   openModal('adminUserModal');
 }
-
 async function adminSaveUser() {
   const id = parseInt(document.getElementById('auUserId').value);
   const err = document.getElementById('adminUserError');
@@ -1859,39 +1603,44 @@ async function adminSaveUser() {
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Сохраняем...</span></div>';
   try {
     await api('PUT', `/api/admin/users/${id}`, body);
-    closeModal('adminUserModal');
-    toast('Пользователь обновлён', 'success');
-    loadAdminSub();
+    closeModal('adminUserModal'); toast('Пользователь обновлён', 'success'); loadAdminSub();
     if (id === state.user.id) { await refreshMe(); render(); }
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
-
 async function adminDeleteUser(id) {
   if (!confirm('Удалить пользователя? Все его счета и коды будут удалены, а история транзакций сохранена с обнулёнными ID.')) return;
-  try {
-    await api('DELETE', `/api/admin/users/${id}`);
-    toast('Пользователь удалён', 'success');
-    loadAdminSub();
-  } catch (e) {
-    if (e.message !== 'OFFLINE') toast(e.message, 'error');
-  }
+  try { await api('DELETE', `/api/admin/users/${id}`); toast('Пользователь удалён', 'success'); loadAdminSub(); }
+  catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
 }
 
 function openAdminLoanModal(id) {
-  const l = adminLoansCache.find(x => x.id === id);
-  if (!l) return;
+  const l = adminLoansCache.find(x => x.id === id); if (!l) return;
+  const repayStr = l.repay_status ? ` · ${REPAY_LABELS[l.repay_status]}` : '';
   document.getElementById('adminLoanInfo').innerHTML = `
     <div class="info-row"><span class="label">Заявитель</span><span class="value">${escapeHtml(l.user_name)}</span></div>
-    <div class="info-row"><span class="label">Сумма</span><span class="value">${formatNumber(l.amount)} ZR</span></div>
-    <div class="info-row"><span class="label">Ставка</span><span class="value">${l.rate}%</span></div>
+    <div class="info-row"><span class="label">Статус</span><span class="value">${l.status}${repayStr}</span></div>
+    <div class="info-row"><span class="label">Сумма</span><span class="value">${formatNumber(l.amount)} ZTL</span></div>
+    <div class="info-row"><span class="label">Ставка</span><span class="value">${l.rate}%/день</span></div>
+    <div class="info-row"><span class="label">Срок</span><span class="value">${l.term_days || '—'} дн.</span></div>
     <div class="info-row"><span class="label">Цель</span><span class="value">${escapeHtml(l.purpose)}</span></div>
+    ${l.total_due ? `<div class="info-row"><span class="label">К возврату</span><span class="value">${formatNumber(l.total_due)} ZTL</span></div>` : ''}
   `;
   document.getElementById('loanFinalAmount').value = l.final_amount || '';
   document.getElementById('loanFinalRate').value = l.final_rate || '';
+  document.getElementById('loanFinalTermDays').value = l.final_term_days || '';
   document.getElementById('loanAdminComment').value = l.admin_comment || '';
+  const dis = (l.status === 'pending') ? '' : 'disabled';
+  document.getElementById('loanFinalAmount').disabled = l.status !== 'pending';
+  document.getElementById('loanFinalRate').disabled = l.status !== 'pending' && l.repay_status !== 'active';
+  document.getElementById('loanFinalTermDays').disabled = l.status !== 'pending' && l.repay_status !== 'active';
+  const actions = document.getElementById('adminLoanActions');
+  actions.innerHTML = '';
+  if (l.status === 'approved' && l.repay_status === 'active') {
+    actions.innerHTML = `<div class="btn-row" style="margin-top:0;">
+      <button class="btn btn-success" onclick="adminCollectLoan(${l.id})">${ic('banknote')} Списать</button>
+      <button class="btn btn-danger" onclick="adminForgiveLoan(${l.id})">${ic('check')} Простить</button>
+    </div>`;
+  }
   document.getElementById('adminLoanError').innerHTML = '';
   document.getElementById('adminLoanModal').dataset.loanId = l.id;
   openModal('adminLoanModal');
@@ -1903,10 +1652,12 @@ async function adminReviewLoan(decision) {
   const body = {};
   const fa = document.getElementById('loanFinalAmount').value;
   const fr = document.getElementById('loanFinalRate').value;
+  const ftd = document.getElementById('loanFinalTermDays').value;
   const comment = document.getElementById('loanAdminComment').value;
   if (fa) body.final_amount = parseFloat(fa);
   if (fr) body.final_rate = parseFloat(fr);
-  if (comment) body.admin_comment = comment;
+  if (ftd) body.final_term_days = parseInt(ftd, 10);
+  if (comment !== undefined) body.admin_comment = comment;
   if (decision) body.status = decision;
   err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Сохраняем...</span></div>';
   try {
@@ -1914,61 +1665,156 @@ async function adminReviewLoan(decision) {
     closeModal('adminLoanModal');
     toast(decision === 'approved' ? 'Кредит одобрен' : decision === 'rejected' ? 'Заявка отклонена' : 'Изменения сохранены', 'success');
     loadAdminSub();
-  } catch (e) {
-    if (e.message === 'OFFLINE') return;
-    err.innerHTML = alertBox('error', escapeHtml(e.message));
-  }
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
+}
+
+async function adminCollectLoan(id) {
+  if (!confirm('Списать кредит прямо сейчас? Всё, что есть на балансе, будет взято в счёт долга. На остаток будет выставлен счёт.')) return;
+  try { const data = await api('POST', `/api/admin/loans/${id}/collect`, {});
+    toast(`Кредит обработан: ${data.loan.repay_status}`, 'success');
+    closeModal('adminLoanModal'); loadAdminSub();
+  } catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
+}
+async function adminForgiveLoan(id) {
+  if (!confirm('Простить долг? Деньги не вернутся, счёт на остаток будет удалён.')) return;
+  try { await api('POST', `/api/admin/loans/${id}/forgive`, {});
+    toast('Долг прощён', 'success');
+    closeModal('adminLoanModal'); loadAdminSub();
+  } catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
+}
+async function adminDeleteLoan(id) {
+  if (!confirm('Удалить запись о кредите? Действующий кредит нельзя удалить.')) return;
+  try { await api('DELETE', `/api/admin/loans/${id}`, {});
+    toast('Кредит удалён', 'success'); loadAdminSub();
+  } catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
+}
+
+async function openAdminDirectLoanModal() {
+  try {
+    const users = await api('GET', '/api/admin/users');
+    document.getElementById('adlUserId').innerHTML = users.map(u =>
+      `<option value="${u.id}">${escapeHtml(u.name)} (ID ${u.id}, ${formatNumber(u.balance)} ZTL)</option>`).join('');
+    document.getElementById('adminDirectLoanError').innerHTML = '';
+    document.getElementById('adlAmount').value = '';
+    document.getElementById('adlRate').value = '';
+    document.getElementById('adlTermDays').value = '14';
+    document.getElementById('adlPurpose').value = '';
+    document.getElementById('adlComment').value = '';
+    openModal('adminDirectLoanModal');
+  } catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
+}
+async function adminDirectLoan() {
+  const user_id = parseInt(document.getElementById('adlUserId').value);
+  const amount = parseFloat(document.getElementById('adlAmount').value);
+  const rate = parseFloat(document.getElementById('adlRate').value);
+  const term_days = parseInt(document.getElementById('adlTermDays').value, 10);
+  const purpose = document.getElementById('adlPurpose').value.trim();
+  const comment = document.getElementById('adlComment').value.trim();
+  const err = document.getElementById('adminDirectLoanError');
+  if (!user_id || !amount || amount <= 0) { err.innerHTML = alertBox('error', 'Укажите сумму > 0'); return; }
+  if (!rate || rate <= 0 || rate > 100) { err.innerHTML = alertBox('error', 'Ставка: (0, 100]'); return; }
+  if (!term_days || term_days < 1 || term_days > 30) { err.innerHTML = alertBox('error', 'Срок: 1–30 дней'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Выдаём кредит...</span></div>';
+  const body = { user_id, amount, rate, term_days };
+  if (purpose) body.purpose = purpose;
+  if (comment) body.admin_comment = comment;
+  try {
+    await api('POST', '/api/admin/loans', body);
+    closeModal('adminDirectLoanModal'); toast('Кредит выдан', 'success'); loadAdminSub();
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
+}
+
+function openAdminSettingsModal() {
+  if (!adminSettingsCache) return;
+  document.getElementById('setCommission').value = adminSettingsCache.commission_pct;
+  document.getElementById('setTax').value = adminSettingsCache.income_tax_pct;
+  document.getElementById('setLiquidity').value = adminSettingsCache.coin_liquidity;
+  document.getElementById('adminSettingsError').innerHTML = '';
+  openModal('adminSettingsModal');
+}
+async function adminSaveSettings() {
+  const err = document.getElementById('adminSettingsError');
+  const body = {};
+  const c = parseFloat(document.getElementById('setCommission').value);
+  const t = parseFloat(document.getElementById('setTax').value);
+  const l = parseFloat(document.getElementById('setLiquidity').value);
+  if (!isNaN(c)) body.commission_pct = c;
+  if (!isNaN(t)) body.income_tax_pct = t;
+  if (!isNaN(l)) body.coin_liquidity = l;
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Сохраняем...</span></div>';
+  try {
+    adminSettingsCache = await api('PUT', '/api/admin/settings', body);
+    closeModal('adminSettingsModal'); toast('Настройки обновлены', 'success');
+    feesCache = null; loadAdminSub();
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
+}
+
+function openAdminMarketPrice() {
+  document.getElementById('ampPrice').value = adminMarketCache ? adminMarketCache.price : '';
+  document.getElementById('adminMarketPriceError').innerHTML = '';
+  openModal('adminMarketPriceModal');
+}
+async function adminSetCoinPrice() {
+  const price = parseFloat(document.getElementById('ampPrice').value);
+  const err = document.getElementById('adminMarketPriceError');
+  if (!price || price <= 0) { err.innerHTML = alertBox('error', 'Цена > 0'); return; }
+  err.innerHTML = '<div class="alert info"><span class="spinner"></span><span>Устанавливаем...</span></div>';
+  try {
+    await api('POST', '/api/admin/market/price', { price });
+    closeModal('adminMarketPriceModal'); toast('Цена установлена', 'success');
+    loadAdminMarket();
+  } catch (e) { if (e.message !== 'OFFLINE') err.innerHTML = alertBox('error', escapeHtml(e.message)); }
 }
 
 function adminEditInvoice(id) {
-  const inv = adminInvoicesCache.find(x => x.id === id);
-  if (!inv) return;
-  const newAmount = prompt('Новая сумма (ZR):', inv.amount);
+  const inv = adminInvoicesCache.find(x => x.id === id); if (!inv) return;
+  const body = {};
+  const newAmount = prompt('Новая сумма (ZTL):', inv.amount);
   if (newAmount === null) return;
+  if (parseFloat(newAmount) && parseFloat(newAmount) !== inv.amount) body.amount = parseFloat(newAmount);
   const newDesc = prompt('Новое описание:', inv.description || '');
   if (newDesc === null) return;
-  const body = {};
-  if (parseFloat(newAmount) !== inv.amount) body.amount = parseFloat(newAmount);
   if (newDesc !== (inv.description || '')) body.description = newDesc;
+  const newFrom = prompt('ID плательщика:', inv.from_id);
+  if (newFrom === null) return;
+  if (parseInt(newFrom) !== inv.from_id) body.from_id = parseInt(newFrom);
+  const newTo = prompt('ID получателя:', inv.to_id);
+  if (newTo === null) return;
+  if (parseInt(newTo) !== inv.to_id) body.to_id = parseInt(newTo);
+  const newDue = prompt('Срок (ISO-8601) или пусто:', inv.due_at || '');
+  if (newDue === null) return;
+  if ((newDue || null) !== (inv.due_at || null)) body.due_at = newDue || null;
   if (!Object.keys(body).length) return;
   api('PUT', `/api/admin/invoices/${id}`, body)
     .then(() => { toast('Счёт обновлён', 'success'); loadAdminSub(); })
     .catch(e => { if (e.message !== 'OFFLINE') toast(e.message, 'error'); });
 }
-
 async function adminDeleteInvoice(id) {
   if (!confirm('Удалить счёт?')) return;
-  try {
-    await api('DELETE', `/api/admin/invoices/${id}`);
-    toast('Счёт удалён', 'success');
-    loadAdminSub();
-  } catch (e) {
-    if (e.message !== 'OFFLINE') toast(e.message, 'error');
-  }
+  try { await api('DELETE', `/api/admin/invoices/${id}`); toast('Счёт удалён', 'success'); loadAdminSub(); }
+  catch (e) { if (e.message !== 'OFFLINE') toast(e.message, 'error'); }
 }
 
 function editTransaction(id) {
-  const tx = adminTxCache.find(t => t.id === id);
-  if (!tx) return;
-  const newAmount = prompt('Новая сумма (ZR):', tx.amount);
+  const tx = adminTxCache.find(t => t.id === id); if (!tx) return;
+  const body = {};
+  const newAmount = prompt('Новая сумма (ZTL):', tx.amount);
   if (newAmount === null) return;
-  const newType = prompt('Новый тип (Перевод/ЗП/Оплата/Покупка/Прочее/Кредит):', tx.tx_type);
+  if (parseFloat(newAmount) !== tx.amount) body.amount = parseFloat(newAmount);
+  const newType = prompt('Новый тип:', tx.tx_type);
   if (newType === null) return;
+  if (newType !== tx.tx_type) body.tx_type = newType;
   const newNote = prompt('Новая заметка:', tx.note || '');
   if (newNote === null) return;
+  if (newNote !== (tx.note || '')) body.note = newNote;
   const newReceipt = prompt('Новый текст чека:', tx.receipt || '');
   if (newReceipt === null) return;
-  const body = {};
-  if (parseFloat(newAmount) !== tx.amount) body.amount = parseFloat(newAmount);
-  if (newType !== tx.tx_type) body.tx_type = newType;
-  if (newNote !== (tx.note || '')) body.note = newNote;
   if (newReceipt !== (tx.receipt || '')) body.receipt = newReceipt;
   if (Object.keys(body).length === 0) return;
   api('PUT', `/api/admin/transactions/${id}`, body)
     .then(() => { toast('Транзакция обновлена', 'success'); loadAdminSub(); })
     .catch(e => { if (e.message !== 'OFFLINE') toast(e.message, 'error'); });
 }
-
 function deleteTransaction(id) {
   if (!confirm('Удалить эту транзакцию безвозвратно?')) return;
   api('DELETE', `/api/admin/transactions/${id}`)
@@ -1980,12 +1826,9 @@ function deleteTransaction(id) {
 function formatNumber(n) {
   return new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
-
 function escapeHtml(s) {
   if (s === null || s === undefined) return '';
-  return String(s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 /* ─── Init ─── */
@@ -1993,6 +1836,8 @@ initTheme();
 loadState();
 render();
 
+// Предзагрузка комиссии для подсказок в формах переводов
+if (state.token) loadFees();
 document.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     if (e.target.id === 'loginEmail' || e.target.id === 'loginPassword') doLogin();
